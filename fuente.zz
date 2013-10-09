@@ -1,7 +1,9 @@
 ## comentario
 ## otro comentario
 foo = bar + baz
-if:
+if (a > b & b < u):
     a = b + c
     b = 2 + 3
+    if (a < b):
+        a = b + x
 a = 2 + 2
