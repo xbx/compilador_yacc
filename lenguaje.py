@@ -25,10 +25,12 @@ def concatena(lista):
 tercetos = []
 
 def crea_terceto(*args):
+    """ Crea y agrega un terceto (string) a la lista """
     tercetos.append("(%s)" % ", ".join(args))
 
 nro_regla = 0
 def get_nro_regla():
+    """ Contador de numero de regla 'actual'. Incrementa a medida que se crean"""
     global nro_regla
     regla = "[%s]" % nro_regla
     nro_regla += 1
