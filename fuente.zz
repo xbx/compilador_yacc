@@ -1,9 +1,18 @@
-## comentario
-## otro comentario
+## TODO: el fuente debe terminar con algo en nivel cero (bug, por ahora)
+## TODO: No acepta dos enters seguidos
+## Asegurarse de que los enters no tengan \r
 foo = bar + baz
 if (a > b & b < u):
-    a = b + c
     b = 2 + 3
     if (a < b):
         a = b + x
+    a = s + 8
+while (a > b):
+    c = d
+a = 2 + 2
+if (a > b & b < u):
+    while (a > b):
+        c = d
+        if (c > 1):
+            oka = 1
 a = 2 + 2

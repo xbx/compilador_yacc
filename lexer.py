@@ -12,6 +12,8 @@ tokens = [
    'ID',
    'OP_AS',
    'OP_SUMA',
+   'PR_WHILE',
+   'OP_DISTINTO',
    'CTE_ENT',
    'FIN_LINEA',
    'ABRE_BLOQUE',
@@ -20,6 +22,7 @@ tokens = [
    'DOS_PUNTOS',
    'OP_MAYOR',
    'OP_MENOR',
+   'OP_MENORIGUAL',
    'PR_AND',
    'PR_OR',
    'PAREN_ABRE',
@@ -69,7 +72,7 @@ class Lexer(object):
                 ("=", ["17", '', '', self.acc_NADA]),
                 ("[0-9]", ["20", '', '', self.acc_NADA]),
                 ("[a-zA-Z]", ["1", '', '', self.acc_NADA]),
-                ('\n', [ESTADO_FIN_LINEA, '', '', self.acc_NADA]),
+                ('\n', [ESTADO_FIN_LINEA, '', '', self.acc_RESET_NIVEL_SENTENCIA]),
                 (':', ["3", '', '', self.acc_NADA]),
                 ('#', ["4", '', '', self.acc_NADA]),
                 
@@ -105,7 +108,10 @@ class Lexer(object):
                 (Val.CUALQUIER, ["F", 'OP_MAYOR', '', self.acc_NADA]),
             ]),
             "7": OrderedDict([
+                ('>', ["13", "", '', self.acc_NADA]),
+                ('=', ["14", "", '', self.acc_NADA]),
                 (Val.CUALQUIER, ["F", 'OP_MENOR', '', self.acc_NADA]),
+
             ]),
             "8": OrderedDict([
                 ('&', ["F", 'PR_AND', '', self.acc_NADA]),
@@ -123,6 +129,14 @@ class Lexer(object):
             ]),
             "12": OrderedDict([
                 (Val.CUALQUIER, ["F", 'PAREN_CIERRA', '', self.acc_NADA]),
+            ]),
+
+            "13": OrderedDict([
+                (Val.CUALQUIER, ["F", 'OP_DISTINTO', '', self.acc_NADA]),
+            ]),
+
+            "14": OrderedDict([
+                (Val.CUALQUIER, ["F", 'OP_MENORIGUAL', '', self.acc_NADA]),
             ]),
                        
             "17": OrderedDict([
@@ -169,12 +183,12 @@ class Lexer(object):
             """ Primero nos fijamos si hay tokens encolados"""
             if len(self.cola_tokens):
                 yield self.cola_tokens.pop()
-            
+
             """ 
                 Itera caracter por caracter 
             """
             input_char = self.text[i]
-            
+
             if self.estado != ESTADO_FIN_LINEA\
                 and input_char == " ":
                 """ Ignormos espacios dentro de de las lineas """
@@ -206,6 +220,8 @@ class Lexer(object):
                 "ID's: Casos especiales, palabras reservadas"
                 if token.value == 'if':
                     token = Token(type="PR_IF", value="if")
+                elif token.value == 'while':
+                    token = Token(type="PR_WHILE", value="while")
 
             yield token
             self.cadena = ""
@@ -223,6 +239,8 @@ class Lexer(object):
     """
     def acc_NADA(self, simbolo):
         pass
+    def acc_RESET_NIVEL_SENTENCIA(self, simbolo):
+        self.nivel_espacios_sentencia = 0
     def acc_FIN_LINEA(self, simbolo):
         if simbolo == " ":  # Bloque (tab)
             self.nivel_espacios_sentencia += 1
@@ -232,9 +250,13 @@ class Lexer(object):
                 self.nivel_bloques.append(self.nivel_espacios_sentencia),
                 token = Token(type="ABRE_BLOQUE", value=" {\n")
             elif self.nivel_bloques[-1] > self.nivel_espacios_sentencia:
-                while self.nivel_bloques.pop() != self.nivel_espacios_sentencia:
+                bloque = self.nivel_bloques.pop()
+                while bloque != self.nivel_espacios_sentencia:
                     token = Token(type="CIERRA_BLOQUE", value="}\n")
                     self.cola_tokens.append(token)
+                    bloque = self.nivel_bloques.pop()
+                    """ Si consumio todos, agregamos el nivel 0"""
+                self.nivel_bloques.append(bloque)  # Agrego el ultimo bloque
                 return "ENCOLADOS"
             else:
                 token = Token(type="FIN_LINEA", value="\n")  # Se ignoran los epacios de tabulacion
