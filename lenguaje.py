@@ -37,10 +37,44 @@ def get_nro_regla():
     return regla
 
 """
+    ###############################
     BNF y mapeo al codigo resultado
+    ###############################
 """
 def p_programa(p):
-    'programa : bloque'
+    'programa : PR_DEC DOS_PUNTOS ABRE_BLOQUE declaraciones CIERRA_BLOQUE PR_ENDEC FIN_LINEA bloque'
+    p[0] = get_nro_regla()
+    crea_terceto(p[4], p[8])
+
+def p_declaraciones(p):
+    'declaraciones : declaracion FIN_LINEA declaraciones'
+    p[0] = get_nro_regla()
+    crea_terceto(p[1], p[2]) # revisar
+
+def p_declaraciones_simple(p):
+    'declaraciones : declaracion'
+    p[0] = get_nro_regla()
+    crea_terceto(p[1]) # revisar
+
+def p_declaracion(p):
+    """
+    declaracion : PR_INT DOS_PUNTOS lista_ids
+    declaracion : PR_FLOAT DOS_PUNTOS lista_ids
+    """
+    p[0] = get_nro_regla()
+    crea_terceto(p[1], p[3])
+
+def p_lista_ids(p):
+    """
+    lista_ids : ID COMA lista_ids
+    """
+    p[0] = get_nro_regla()
+    crea_terceto(p[1], p[3])
+
+def p_lista_ids_simple(p):
+    """
+    lista_ids : ID
+    """
     p[0] = get_nro_regla()
     crea_terceto(p[1])
 

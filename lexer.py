@@ -23,8 +23,13 @@ tokens = [
    'OP_MENORIGUAL',
    'PR_AND',
    'PR_OR',
+   'PR_INT',
+   'PR_FLOAT',
+   'PR_DEC',
+   'PR_ENDEC',
    'PAREN_ABRE',
    'PAREN_CIERRA',
+   'COMA',
 ]
 
 class Token(object):
@@ -113,9 +118,13 @@ class Lexer(object):
             """
             input_char = self.text[i]
 
+            if input_char == '\r':
+                # Se ignoran completamente esos caracteres
+                continue
             if self.estado != Val.E_FIN_LINEA\
                 and input_char == " ":
                 """ Ignormos espacios dentro de de las lineas """
+                pass
                 i += 1
                 continue
             self.cadena += input_char
@@ -141,11 +150,23 @@ class Lexer(object):
                 self.cadena = ""
                 continue
             elif isinstance(token, Token) and token.type == 'ID':
-                "ID's: Casos especiales, palabras reservadas"
+                """
+                    #######################
+                    Palabras reservadas PR_
+                    #######################
+                """
                 if token.value == 'if':
                     token = Token(type="PR_IF", value="if")
                 elif token.value == 'while':
                     token = Token(type="PR_WHILE", value="while")
+                elif token.value == 'int':
+                    token = Token(type="PR_INT", value="int")
+                elif token.value == 'float':
+                    token = Token(type="PR_FLOAT", value="float")
+                elif token.value == 'dec':
+                    token = Token(type="PR_DEC", value="dec")
+                elif token.value == 'endec':
+                    token = Token(type="PR_ENDEC", value="endec")
 
             self.cadena = ""
             # retorno del/de los token/s

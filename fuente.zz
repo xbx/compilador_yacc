@@ -1,6 +1,11 @@
 ## TODO: el fuente debe terminar con algo en nivel cero (bug, por ahora)
 ## TODO: No acepta dos enters seguidos
 ## Asegurarse de que los enters no tengan \r
+dec:
+    int: a,c,d
+    float: b
+endec
+
 foo = bar + baz
 if (a > b & b < u):
     b = 2 + 3

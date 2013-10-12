@@ -32,6 +32,7 @@ matriz = {
 
         ('\(', ["11", '', '', Lexer.acc_NADA]),
         ('\)', ["12", '', '', Lexer.acc_NADA]),
+        (',', ["21", '', '', Lexer.acc_NADA]),
 
     ]),
     "1": OrderedDict([
@@ -40,6 +41,7 @@ matriz = {
     ]),
     "2": OrderedDict([
         (" ", [Val.E_FIN_LINEA, '', '', Lexer.acc_FIN_LINEA]),
+        ("\n", [Val.E_FIN_LINEA, '', '', Lexer.acc_NADA]),
         (Val.CUALQUIER, ["X", '', '', Lexer.acc_FIN_LINEA]),  # especial, termina indentacion ".": cualquier caracter
     ]),
     "3": OrderedDict([
@@ -91,5 +93,8 @@ matriz = {
     "20": OrderedDict([
         ("[0-9]", ["20"]),
         (Val.CUALQUIER, [Val.E_FINAL, "CTE_ENT", "\.", Lexer.acc_NADA]),
+    ]),
+    "21": OrderedDict([
+        (Val.CUALQUIER, [Val.E_FINAL, "COMA", "", Lexer.acc_NADA]),
     ]),
 }
