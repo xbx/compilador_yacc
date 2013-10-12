@@ -75,7 +75,9 @@ def p_sentencia_sentencia(p):
     crea_terceto(p[1], p[3])
 
 def p_sentencia_while(p):
-    'sentencia_while : PR_WHILE PAREN_ABRE condicion PAREN_CIERRA DOS_PUNTOS ABRE_BLOQUE bloque CIERRA_BLOQUE'
+    """
+    sentencia_while : PR_WHILE PAREN_ABRE condicion PAREN_CIERRA DOS_PUNTOS ABRE_BLOQUE bloque CIERRA_BLOQUE
+    """
     p[0] = get_nro_regla()
     # (while, condicion, bloque)
     crea_terceto(p[1], p[3], p[7])

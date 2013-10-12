@@ -6,8 +6,6 @@ Mariano Francischini, Alejandro Giorgi, Roberto Bravo
 TP Compilador - Analizador Lexico
 """
 import re
-from collections import OrderedDict
-
 tokens = [
    'ID',
    'OP_AS',
@@ -29,8 +27,6 @@ tokens = [
    'PAREN_CIERRA',
 ]
 
-ESTADO_FIN_LINEA = "2"
-
 class Token(object):
     def __init__(self, type, value):
         self.type = type
@@ -43,9 +39,10 @@ class Token(object):
 class Val(object):
     """ Reg Exps """
     CUALQUIER = "."
-    
+
     """ Estados automata """
     E_FINAL = "F"
+    E_FIN_LINEA = "2"
 
 class Lexer(object):
     """
@@ -56,102 +53,19 @@ class Lexer(object):
     def __init__(self):
         self.nivel_bloques = [0]  # Nivel de tab del bloque actual
         self.nivel_espacios_sentencia = 0  # Nivel de tab de la sentencia actual
-        
+
         """Cuando se descubren varios tokens juntos se los envia \
            a esta cola para irlos devolviendo en sucesivas llamadas
         """
         self.cola_tokens = []
-         
-        """
-        Sintaxis:
-        ("<caracter>", ["<nuevo_estado>", '<token>', '<caracter_excepto>', <funcion>]),
-        """
-        self.matriz = {
-            "0": OrderedDict([
-                ('\+', ["10", '', '', self.acc_NADA]),
-                ("=", ["17", '', '', self.acc_NADA]),
-                ("[0-9]", ["20", '', '', self.acc_NADA]),
-                ("[a-zA-Z]", ["1", '', '', self.acc_NADA]),
-                ('\n', [ESTADO_FIN_LINEA, '', '', self.acc_RESET_NIVEL_SENTENCIA]),
-                (':', ["3", '', '', self.acc_NADA]),
-                ('#', ["4", '', '', self.acc_NADA]),
-                
-                ('>', ["6", '', '', self.acc_NADA]),
-                ('<', ["7", '', '', self.acc_NADA]),
-                ('&', ["8", '', '', self.acc_NADA]),
-                ('\|', ["9", '', '', self.acc_NADA]),
-                
-                ('\(', ["11", '', '', self.acc_NADA]),
-                ('\)', ["12", '', '', self.acc_NADA]),
 
-            ]),
-            "1": OrderedDict([
-                ("[a-zA-Z0-9]", ["1", '', '', self.acc_NADA]),
-                (Val.CUALQUIER, [Val.E_FINAL, "ID", '', self.acc_NADA]),
-            ]),
-            "2": OrderedDict([
-                (" ", [ESTADO_FIN_LINEA, '', '', self.acc_FIN_LINEA]),
-                (Val.CUALQUIER, ["X", '', '', self.acc_FIN_LINEA]),  # especial, termina indentacion ".": cualquier caracter
-            ]),
-            "3": OrderedDict([
-                (Val.CUALQUIER, [Val.E_FINAL, "DOS_PUNTOS", '', self.acc_NADA]),
-            ]),
-            "4": OrderedDict([
-                ('#', ["5", '', '', self.acc_NADA]),
-            ]),
-            "5": OrderedDict([
-                ("\n", ["X", "COMENTARIO", '', self.acc_COMENTARIO]),
-                (Val.CUALQUIER, ["5", "", '\n', self.acc_NADA]),
-            ]),
-                       
-            "6": OrderedDict([
-                (Val.CUALQUIER, ["F", 'OP_MAYOR', '', self.acc_NADA]),
-            ]),
-            "7": OrderedDict([
-                ('>', ["13", "", '', self.acc_NADA]),
-                ('=', ["14", "", '', self.acc_NADA]),
-                (Val.CUALQUIER, ["F", 'OP_MENOR', '', self.acc_NADA]),
-
-            ]),
-            "8": OrderedDict([
-                ('&', ["F", 'PR_AND', '', self.acc_NADA]),
-            ]),
-            "9": OrderedDict([
-                ('|', ["F", 'PR_OR', '', self.acc_NADA]),
-            ]),
-                       
-            "10": OrderedDict([
-                (Val.CUALQUIER, [Val.E_FINAL, "OP_SUMA", '', self.acc_NADA]),
-            ]),
-                       
-            "11": OrderedDict([
-                (Val.CUALQUIER, ["F", 'PAREN_ABRE', '', self.acc_NADA]),
-            ]),
-            "12": OrderedDict([
-                (Val.CUALQUIER, ["F", 'PAREN_CIERRA', '', self.acc_NADA]),
-            ]),
-
-            "13": OrderedDict([
-                (Val.CUALQUIER, ["F", 'OP_DISTINTO', '', self.acc_NADA]),
-            ]),
-
-            "14": OrderedDict([
-                (Val.CUALQUIER, ["F", 'OP_MENORIGUAL', '', self.acc_NADA]),
-            ]),
-                       
-            "17": OrderedDict([
-                (Val.CUALQUIER, [Val.E_FINAL, "OP_AS", "=", self.acc_NADA]),
-            ]),
-            "20": OrderedDict([
-                ("[0-9]", ["20"]),
-                (Val.CUALQUIER, [Val.E_FINAL, "CTE_ENT", "\.", self.acc_NADA]),
-            ]),
-        }
-
+        from automata import matriz
+        self.matriz = matriz
 
     def input(self, text):
         """ Metodo requerido por yyparse """
-        self.text = text + "\n"
+        # Se apendea una marca de finde de fuente
+        self.text = text.strip('\n ') + "\x00"
         self.generate = self.generator()
 
     def iterar_estado(self, estado_actual, input_char):
@@ -161,24 +75,34 @@ class Lexer(object):
                 return Token(type=accion[1], value=self.cadena[0:-1])
             elif re.match(simbolo, input_char) is not None:
                 if accion[2] and re.match(accion[2], input_char):
-                    """ es un excepto => continue """
-                    continue
-                resultado = accion[3](simbolo)
+                    continue # es un excepto, entonces continue
+                resultado = accion[3](self, simbolo)
                 if resultado is not None:
                     self.estado = "0"
                     return resultado
                 self.estado = accion[0]
-                return "NEXT"
-        return  Token(type="$end", value="")
+                return "NEXT" # Se pide el proximo caracter
+
+        # Fin de archivo
+        # Revisamos si es necesario cerrar bloques abiertos
+        tokens = []
+        if len(self.nivel_bloques) > 1:
+            for _ in self.nivel_bloques[1:]: # se ignora el primero (nivel 0)
+                token = Token(type="CIERRA_BLOQUE", value="}\n")
+                tokens.append(token)
+        fin_archivo = Token(type="$end", value="")
+        tokens.append(fin_archivo)
+        return tokens # Devolvemos todos los cierres juntos + fin de archivo
+
 
     def generator(self):
         """
             Automata
         """
-        self.estado = "0"
-        self.cadena = ""
-        i = 0
+        self.estado = "0" # estado actual del automata. Inicial: cero
+        self.cadena = "" # Cadena que se acumula a medida que entran caracteres
 
+        i = 0
         while i < len(self.text):
             """ Primero nos fijamos si hay tokens encolados"""
             if len(self.cola_tokens):
@@ -189,7 +113,7 @@ class Lexer(object):
             """
             input_char = self.text[i]
 
-            if self.estado != ESTADO_FIN_LINEA\
+            if self.estado != Val.E_FIN_LINEA\
                 and input_char == " ":
                 """ Ignormos espacios dentro de de las lineas """
                 i += 1
@@ -216,15 +140,21 @@ class Lexer(object):
                 """
                 self.cadena = ""
                 continue
-            elif token.type == 'ID':
+            elif isinstance(token, Token) and token.type == 'ID':
                 "ID's: Casos especiales, palabras reservadas"
                 if token.value == 'if':
                     token = Token(type="PR_IF", value="if")
                 elif token.value == 'while':
                     token = Token(type="PR_WHILE", value="while")
 
-            yield token
             self.cadena = ""
+            # retorno del/de los token/s
+            if isinstance(token, list):
+                for tk in token:
+                    yield tk
+            else:
+                yield token
+
 
     def token(self):
         try:
@@ -235,7 +165,7 @@ class Lexer(object):
             return None
 
     """
-        Metodos de acciones ejecutadas en cada estado del au" " *tomata
+        Metodos de acciones ejecutadas en cada estado del automata
     """
     def acc_NADA(self, simbolo):
         pass
