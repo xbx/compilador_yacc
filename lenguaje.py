@@ -57,7 +57,7 @@ def p_declaraciones(p):
     p[0] = get_nro_regla()
     # aca actualizar la tabla de simbolos
     # No habria que crear tercetos
-    crea_terceto(p[1], p[2])
+    crea_terceto(p[1], p[3])
 
 def p_declaraciones_simple(p):
     'declaraciones : declaracion'
