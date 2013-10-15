@@ -33,6 +33,9 @@ matriz = {
         ('\(', ["11", '', '', Lexer.acc_NADA]),
         ('\)', ["12", '', '', Lexer.acc_NADA]),
         (',', ["21", '', '', Lexer.acc_NADA]),
+        ('\*', ["22", '', '', Lexer.acc_NADA]),
+        ('/', ["23", '', '', Lexer.acc_NADA]),
+        ('-', ["24", '', '', Lexer.acc_NADA]),
 
     ]),
     "1": OrderedDict([
@@ -96,5 +99,14 @@ matriz = {
     ]),
     "21": OrderedDict([
         (Val.CUALQUIER, [Val.E_FINAL, "COMA", "", Lexer.acc_NADA]),
+    ]),
+    "22": OrderedDict([
+        (Val.CUALQUIER, [Val.E_FINAL, "OP_MUL", "", Lexer.acc_NADA]),
+    ]),
+    "23": OrderedDict([
+        (Val.CUALQUIER, [Val.E_FINAL, "OP_DIV", "", Lexer.acc_NADA]),
+    ]),
+    "24": OrderedDict([
+        (Val.CUALQUIER, [Val.E_FINAL, "OP_RESTA", "", Lexer.acc_NADA]),
     ]),
 }

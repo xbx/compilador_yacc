@@ -53,8 +53,7 @@ def p_declaraciones(p):
 
 def p_declaraciones_simple(p):
     'declaraciones : declaracion'
-    p[0] = get_nro_regla()
-    crea_terceto(p[1]) # revisar
+    p[0] = p[1]
 
 def p_declaracion(p):
     """
@@ -75,8 +74,7 @@ def p_lista_ids_simple(p):
     """
     lista_ids : ID
     """
-    p[0] = get_nro_regla()
-    crea_terceto(p[1])
+    p[0] = p[1]
 
 def p_bloque(p):
     """
@@ -89,8 +87,7 @@ def p_bloque_simple(p):
     """
     bloque : sentencia
     """
-    p[0] = get_nro_regla()
-    crea_terceto(p[1])
+    p[0] = p[1]
 
 def p_sentencia(p):
     """
@@ -98,8 +95,7 @@ def p_sentencia(p):
     sentencia : sentencia_condicional
     sentencia : sentencia_while
     """
-    p[0] = get_nro_regla()
-    crea_terceto(p[1])
+    p[0] = p[1]
 
 def p_sentencia_sentencia(p):
     """
@@ -146,20 +142,23 @@ def p_condicion(p):
     crea_terceto(p[2], p[1], p[3])
 
 def p_expresion(p):
-    'expresion : expresion OP_SUMA termino'
+    """
+    expresion : expresion OP_SUMA termino
+    expresion : expresion OP_RESTA termino
+    expresion : expresion OP_MUL termino
+    expresion : expresion OP_DIV termino
+    """
     p[0] = get_nro_regla()
     # (+, exp, ter)
     crea_terceto(p[2], p[1], p[3])
 
 def p_expression_term(p):
     'expresion : termino'
-    p[0] = get_nro_regla()
-    crea_terceto(p[1])
+    p[0] = p[1]
 
 def p_term_factor(p):
     'termino : factor'
-    p[0] = get_nro_regla()
-    crea_terceto(p[1])
+    p[0] = p[1]
 
 def p_factor(p):
     """
