@@ -1,26 +1,38 @@
 ## UNLAM 2013
 ## LYC - Bravo, Giorgi, Francisichini
+
 dec:
     int: a,c,d
     float: b
+    string: str
 endec
 
-##funcion
+## funcion
 def funcion1: float
     a = 3
 return a
 
+## constante string
+str = "test de una cadena"
+
+## Asignacion
 foo = bar + baz
+
+## Condicional / anidamiento
 if a > b & b < u:
     b = 2 + 3
     if a < b:
         a = b + x
     a = s + 8
 
-while a > b:
-    c = d
+## Suma
 a = 2 + 2
+
+
 a = 2 * b - 3
+
+## Asociativiadad
+a = 2 * (b - 3)
 c = 2 / b
 
 if a > b & b < u:

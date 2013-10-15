@@ -13,6 +13,8 @@ tokens = [
    'PR_WHILE',
    'OP_DISTINTO',
    'CTE_ENT',
+   'CTE_REAL',
+   'CTE_STRING',
    'FIN_LINEA',
    'ABRE_BLOQUE',
    'CIERRA_BLOQUE',
@@ -32,6 +34,7 @@ tokens = [
    'PR_ENDEC',
    'PR_DEF',
    'PR_RETURN',
+   'PR_STRING',
    'PAREN_ABRE',
    'PAREN_CIERRA',
    'COMA',
@@ -85,32 +88,32 @@ class Lexer(object):
                 return Token(type=accion[1], value=self.cadena[0:-1])
             elif re.match(simbolo, input_char) is not None:
                 if accion[2] and re.match(accion[2], input_char):
-                    continue # es un excepto, entonces continue
+                    continue  # es un excepto, entonces continue
                 resultado = accion[3](self, simbolo)
                 if resultado is not None:
                     self.estado = "0"
                     return resultado
                 self.estado = accion[0]
-                return "NEXT" # Se pide el proximo caracter
+                return "NEXT"  # Se pide el proximo caracter
 
         # Fin de archivo
         # Revisamos si es necesario cerrar bloques abiertos
         tokens = []
         if len(self.nivel_bloques) > 1:
-            for _ in self.nivel_bloques[1:]: # se ignora el primero (nivel 0)
+            for _ in self.nivel_bloques[1:]:  # se ignora el primero (nivel 0)
                 token = Token(type="CIERRA_BLOQUE", value="}\n")
                 tokens.append(token)
         fin_archivo = Token(type="$end", value="")
         tokens.append(fin_archivo)
-        return tokens # Devolvemos todos los cierres juntos + fin de archivo
+        return tokens  # Devolvemos todos los cierres juntos + fin de archivo
 
 
     def generator(self):
         """
             Automata
         """
-        self.estado = "0" # estado actual del automata. Inicial: cero
-        self.cadena = "" # Cadena que se acumula a medida que entran caracteres
+        self.estado = "0"  # estado actual del automata. Inicial: cero
+        self.cadena = ""  # Cadena que se acumula a medida que entran caracteres
 
         i = 0
         while i < len(self.text):
@@ -146,7 +149,6 @@ class Lexer(object):
                 continue
             elif token == "IGNORE":
                 """ Por ej los comentarios"""
-                i += 1
                 self.cadena = ""
                 continue
             elif token == "ENCOLADOS":
@@ -177,6 +179,8 @@ class Lexer(object):
                     token = Token(type="PR_DEF", value="def")
                 elif token.value == 'return':
                     token = Token(type="PR_RETURN", value="return")
+                elif token.value == 'string':
+                    token = Token(type="PR_STRING", value="string")
 
 
             self.cadena = ""

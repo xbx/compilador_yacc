@@ -42,14 +42,22 @@ def get_nro_regla():
     ###############################
 """
 def p_programa(p):
-    'programa : PR_DEC DOS_PUNTOS ABRE_BLOQUE declaraciones CIERRA_BLOQUE PR_ENDEC FIN_LINEA main'
+    ('programa : PR_DEC DOS_PUNTOS '
+                'ABRE_BLOQUE '
+                    'declaraciones '
+                'CIERRA_BLOQUE '
+                'PR_ENDEC '
+                'FIN_LINEA '
+                'main')
     p[0] = get_nro_regla()
     crea_terceto(p[4], p[8])
 
 def p_declaraciones(p):
     'declaraciones : declaracion FIN_LINEA declaraciones'
     p[0] = get_nro_regla()
-    crea_terceto(p[1], p[2]) # revisar
+    # aca actualizar la tabla de simbolos
+    # No habria que crear tercetos
+    crea_terceto(p[1], p[2])
 
 def p_declaraciones_simple(p):
     'declaraciones : declaracion'
@@ -99,6 +107,7 @@ def p_tipo_dato(p):
     """
     tipo_dato : PR_INT
     tipo_dato : PR_FLOAT
+    tipo_dato : PR_STRING
     """
     p[0] = p[1]
 
@@ -149,6 +158,7 @@ def p_asig(p):
     """
     asig : ID OP_AS expresion
     asig : ID OP_AS asig
+    asig : ID OP_AS CTE_STRING
     """
     p[0] = get_nro_regla()
     # (=, ID, exp)
@@ -186,13 +196,19 @@ def p_term_factor(p):
     'termino : factor'
     p[0] = p[1]
 
+def p_factor_parentesis(p):
+    """
+    factor : PAREN_ABRE expresion PAREN_CIERRA
+    """
+    p[0] = p[2]
+
 def p_factor(p):
     """
     factor : CTE_ENT
+    factor : CTE_REAL
     factor : ID
     """
-    p[0] = get_nro_regla()
-    crea_terceto(p[1])
+    p[0] = p[1]
 
 # Error rule for syntax errors
 def p_error(p):

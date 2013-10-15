@@ -36,6 +36,7 @@ matriz = {
         ('\*', ["22", '', '', Lexer.acc_NADA]),
         ('/', ["23", '', '', Lexer.acc_NADA]),
         ('-', ["24", '', '', Lexer.acc_NADA]),
+        ('\"', ["25", '', '', Lexer.acc_NADA]),
 
     ]),
     "1": OrderedDict([
@@ -54,10 +55,13 @@ matriz = {
         ('#', ["5", '', '', Lexer.acc_NADA]),
     ]),
     "5": OrderedDict([
-        ("\n", ["X", "COMENTARIO", '', Lexer.acc_COMENTARIO]),
-        (Val.CUALQUIER, ["5", "", '\n', Lexer.acc_NADA]),
+        ("\n", ["5.1", "", '', Lexer.acc_NADA]),
+        (Val.CUALQUIER, ["5", "", '', Lexer.acc_NADA]),
     ]),
-
+    "5.1": OrderedDict([
+        ("\n", ["5.1", "", '', Lexer.acc_NADA]),
+        (Val.CUALQUIER, ["X", "COMENTARIO", '', Lexer.acc_COMENTARIO]),
+    ]),
     "6": OrderedDict([
         (Val.CUALQUIER, ["F", 'OP_MAYOR', '', Lexer.acc_NADA]),
     ]),
@@ -94,8 +98,13 @@ matriz = {
         (Val.CUALQUIER, [Val.E_FINAL, "OP_AS", "=", Lexer.acc_NADA]),
     ]),
     "20": OrderedDict([
-        ("[0-9]", ["20"]),
+        ("[0-9]", ["20", "", "", Lexer.acc_NADA]),
+        ("\.", ["20.1", "", "", Lexer.acc_NADA]),
         (Val.CUALQUIER, [Val.E_FINAL, "CTE_ENT", "\.", Lexer.acc_NADA]),
+    ]),
+    "20.1": OrderedDict([
+        ("[0-9]", ["20.1", "", "", Lexer.acc_NADA]),
+        (Val.CUALQUIER, [Val.E_FINAL, "CTE_REAL", "\.", Lexer.acc_NADA]),
     ]),
     "21": OrderedDict([
         (Val.CUALQUIER, [Val.E_FINAL, "COMA", "", Lexer.acc_NADA]),
@@ -108,5 +117,12 @@ matriz = {
     ]),
     "24": OrderedDict([
         (Val.CUALQUIER, [Val.E_FINAL, "OP_RESTA", "", Lexer.acc_NADA]),
+    ]),
+    "25": OrderedDict([
+        (Val.CUALQUIER, ["25", "", "\"", Lexer.acc_NADA]),
+        ("\"", ["26", "", "", Lexer.acc_NADA]),
+    ]),
+    "26": OrderedDict([
+        (Val.CUALQUIER, [Val.E_FINAL, "CTE_STRING", "", Lexer.acc_NADA]),
     ]),
 }
