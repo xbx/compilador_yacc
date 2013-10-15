@@ -30,6 +30,8 @@ tokens = [
    'PR_FLOAT',
    'PR_DEC',
    'PR_ENDEC',
+   'PR_DEF',
+   'PR_RETURN',
    'PAREN_ABRE',
    'PAREN_CIERRA',
    'COMA',
@@ -171,6 +173,11 @@ class Lexer(object):
                     token = Token(type="PR_DEC", value="dec")
                 elif token.value == 'endec':
                     token = Token(type="PR_ENDEC", value="endec")
+                elif token.value == 'def':
+                    token = Token(type="PR_DEF", value="def")
+                elif token.value == 'return':
+                    token = Token(type="PR_RETURN", value="return")
+
 
             self.cadena = ""
             # retorno del/de los token/s

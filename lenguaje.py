@@ -42,7 +42,7 @@ def get_nro_regla():
     ###############################
 """
 def p_programa(p):
-    'programa : PR_DEC DOS_PUNTOS ABRE_BLOQUE declaraciones CIERRA_BLOQUE PR_ENDEC FIN_LINEA bloque'
+    'programa : PR_DEC DOS_PUNTOS ABRE_BLOQUE declaraciones CIERRA_BLOQUE PR_ENDEC FIN_LINEA main'
     p[0] = get_nro_regla()
     crea_terceto(p[4], p[8])
 
@@ -57,8 +57,7 @@ def p_declaraciones_simple(p):
 
 def p_declaracion(p):
     """
-    declaracion : PR_INT DOS_PUNTOS lista_ids
-    declaracion : PR_FLOAT DOS_PUNTOS lista_ids
+    declaracion : tipo_dato DOS_PUNTOS lista_ids
     """
     p[0] = get_nro_regla()
     crea_terceto(p[1], p[3])
@@ -73,6 +72,33 @@ def p_lista_ids(p):
 def p_lista_ids_simple(p):
     """
     lista_ids : ID
+    """
+    p[0] = p[1]
+
+def p_main(p):
+    """
+    main : main bloque
+    main : main funcion
+    """
+    p[0] = get_nro_regla()
+    crea_terceto(p[1], p[2])
+
+def p_main_simple(p):
+    """
+    main : bloque
+    main : funcion
+    """
+    p[0] = p[1]
+
+def p_funcion(p):
+    """ funcion : PR_DEF ID DOS_PUNTOS tipo_dato ABRE_BLOQUE bloque CIERRA_BLOQUE PR_RETURN expresion FIN_LINEA"""
+    p[0] = get_nro_regla()
+    crea_terceto(p[2], p[4], p[6])
+
+def p_tipo_dato(p):
+    """
+    tipo_dato : PR_INT
+    tipo_dato : PR_FLOAT
     """
     p[0] = p[1]
 
@@ -106,18 +132,18 @@ def p_sentencia_sentencia(p):
 
 def p_sentencia_while(p):
     """
-    sentencia_while : PR_WHILE PAREN_ABRE condicion PAREN_CIERRA DOS_PUNTOS ABRE_BLOQUE bloque CIERRA_BLOQUE
+    sentencia_while : PR_WHILE condicion DOS_PUNTOS ABRE_BLOQUE bloque CIERRA_BLOQUE
     """
     p[0] = get_nro_regla()
     # (while, condicion, bloque)
-    crea_terceto(p[1], p[3], p[7])
+    crea_terceto(p[1], p[2], p[5])
 
 
 def p_sentencia_condicional(p):
-    'sentencia_condicional : PR_IF PAREN_ABRE condicion PAREN_CIERRA DOS_PUNTOS ABRE_BLOQUE bloque CIERRA_BLOQUE'
+    'sentencia_condicional : PR_IF condicion DOS_PUNTOS ABRE_BLOQUE bloque CIERRA_BLOQUE'
     p[0] = get_nro_regla()
     # (if, condicion, bloque)
-    crea_terceto(p[1], p[3], p[7])
+    crea_terceto(p[1], p[2], p[5])
 
 def p_asig(p):
     """

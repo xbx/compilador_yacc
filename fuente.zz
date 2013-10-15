@@ -1,25 +1,30 @@
-## TODO: el fuente debe terminar con algo en nivel cero (bug, por ahora)
-## TODO: No acepta dos enters seguidos
-## Asegurarse de que los enters no tengan \r
+## UNLAM 2013
+## LYC - Bravo, Giorgi, Francisichini
 dec:
     int: a,c,d
     float: b
 endec
 
+##funcion
+def funcion1: float
+    a = 3
+return a
+
 foo = bar + baz
-if (a > b & b < u):
+if a > b & b < u:
     b = 2 + 3
-    if (a < b):
+    if a < b:
         a = b + x
     a = s + 8
-while (a > b):
+
+while a > b:
     c = d
-a = 2 + 2
-if (a > b & b < u):
-    while (a > b):
-        c = d
-        if (c > 1):
-            oka = 1
 a = 2 + 2
 a = 2 * b - 3
 c = 2 / b
+
+if a > b & b < u:
+    while a > b:
+        c = d
+        if c > 1:
+            oka = 1
