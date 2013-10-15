@@ -1,4 +1,9 @@
 dec:
-    int: a,b,c
+    int: a
 endec
-a = 2 * b + 3
+
+if(a>b):
+    if(a>b):
+        if(c>1):
+            z=1
+a = 2 + 2

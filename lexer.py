@@ -115,19 +115,20 @@ class Lexer(object):
             """ Primero nos fijamos si hay tokens encolados"""
             if len(self.cola_tokens):
                 yield self.cola_tokens.pop()
+                continue
 
             """ 
                 Itera caracter por caracter 
             """
             input_char = self.text[i]
 
-            if input_char == '\r':
-                # Se ignoran completamente esos caracteres
+            if self.estado == '0' and input_char == ' ':
+                """ Ignormos espacios como inicio de un token """
+                i += 1
                 continue
-            if self.estado != Val.E_FIN_LINEA\
-                and input_char == " ":
-                """ Ignormos espacios dentro de de las lineas """
-                pass
+
+            if input_char == '\r':
+                """ Se ignoran completamente esos caracteres """
                 i += 1
                 continue
             self.cadena += input_char
