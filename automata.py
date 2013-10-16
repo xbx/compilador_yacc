@@ -123,6 +123,6 @@ matriz = {
         ("\"", ["26", "", "", Lexer.acc_NADA]),
     ]),
     "26": OrderedDict([
-        (Val.CUALQUIER, [Val.E_FINAL, "CTE_STRING", "", Lexer.acc_NADA]),
+        (Val.CUALQUIER, [Val.E_FINAL, "CTE_STRING", "", Lexer.acc_CTE_STRING]),
     ]),
 }

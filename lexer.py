@@ -57,6 +57,9 @@ class Val(object):
     E_FINAL = "F"
     E_FIN_LINEA = "2"
 
+    """ Cotas """
+    MAX_CTE_STRING = 40
+
 class Lexer(object):
     """
     YYLEX
@@ -85,6 +88,7 @@ class Lexer(object):
         for (simbolo, accion) in estado_actual.items():
             if accion[0] == Val.E_FINAL:
                 self.estado = "0"
+                accion[3](self, simbolo)
                 return Token(type=accion[1], value=self.cadena[0:-1])
             elif re.match(simbolo, input_char) is not None:
                 if accion[2] and re.match(accion[2], input_char):
@@ -205,8 +209,16 @@ class Lexer(object):
     """
     def acc_NADA(self, simbolo):
         pass
+
     def acc_RESET_NIVEL_SENTENCIA(self, simbolo):
         self.nivel_espacios_sentencia = 0
+
+    def acc_CTE_STRING(self, simbolo):
+        # Ignoramos las comillas de abrir y cerrar
+        self.cadena = self.cadena[1:-1]
+        if len(self.cadena) > Val.MAX_CTE_STRING:
+            raise TypeError("CTE_STRING muy larga. Limite %s, largo: %s" % (Val.MAX_CTE_STRING, len(self.cadena)))
+
     def acc_FIN_LINEA(self, simbolo):
         if simbolo == " ":  # Bloque (tab)
             self.nivel_espacios_sentencia += 1

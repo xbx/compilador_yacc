@@ -39,6 +39,7 @@ def get_nro_regla():
 """
     ###############################
     BNF y mapeo al codigo resultado
+    Start Symbol: "programa"
     ###############################
 """
 def p_programa(p):
@@ -51,6 +52,7 @@ def p_programa(p):
                 'main')
     p[0] = get_nro_regla()
     crea_terceto(p[4], p[8])
+    # Traduccion a assembler aca
 
 def p_declaraciones(p):
     'declaraciones : declaracion FIN_LINEA declaraciones'
