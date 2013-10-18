@@ -9,6 +9,9 @@ endec
 
 ## funcion
 def funcion1: float
+    dec:
+        int: a
+    endec
     a = 3
 return a
 
