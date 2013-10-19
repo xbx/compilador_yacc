@@ -43,16 +43,18 @@ def get_nro_regla():
     ###############################
 """
 def p_programa(p):
-    ('programa : PR_DEC DOS_PUNTOS '
-                'ABRE_BLOQUE '
-                    'declaraciones '
-                'CIERRA_BLOQUE '
-                'PR_ENDEC '
-                'FIN_LINEA '
-                'main')
+    'programa : bloque_dec main'
     p[0] = get_nro_regla()
-    crea_terceto(p[4], p[8])
+    crea_terceto(p[1], p[2])
     # Traduccion a assembler aca
+
+def p_bloque_dec(p):
+    ('bloque_dec : PR_DEC DOS_PUNTOS '
+        'ABRE_BLOQUE '
+            'declaraciones '
+        'CIERRA_BLOQUE '
+     'PR_ENDEC FIN_LINEA ')
+    p[0] = p[4]
 
 def p_declaraciones(p):
     'declaraciones : declaracion FIN_LINEA declaraciones'
@@ -101,7 +103,14 @@ def p_main_simple(p):
     p[0] = p[1]
 
 def p_funcion(p):
-    """ funcion : PR_DEF ID DOS_PUNTOS tipo_dato ABRE_BLOQUE bloque CIERRA_BLOQUE PR_RETURN expresion FIN_LINEA"""
+    ('funcion : '
+        'PR_DEF ID DOS_PUNTOS tipo_dato '
+            'ABRE_BLOQUE '
+                'bloque_dec '
+                'bloque '
+            'CIERRA_BLOQUE '
+        'PR_RETURN expresion FIN_LINEA'
+     )
     p[0] = get_nro_regla()
     crea_terceto(p[2], p[4], p[6])
 
@@ -131,15 +140,25 @@ def p_sentencia(p):
     sentencia : asig
     sentencia : sentencia_condicional
     sentencia : sentencia_while
+    sentencia : sentencia_print
     """
     p[0] = p[1]
 
+    
 def p_sentencia_sentencia(p):
     """
     sentencia : sentencia FIN_LINEA sentencia
     """
     p[0] = get_nro_regla()
     crea_terceto(p[1], p[3])
+
+def p_sentencia_print(p):
+    """
+    sentencia_print : PR_PRINT ID
+    """
+    p[0] = get_nro_regla()
+    print "Regla nro: " + p[0] + "PR_PRINT ID"  
+    
 
 def p_sentencia_while(p):
     """

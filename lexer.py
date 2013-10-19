@@ -38,6 +38,7 @@ tokens = [
    'PAREN_ABRE',
    'PAREN_CIERRA',
    'COMA',
+   'PR_PRINT'
 ]
 
 class Token(object):
@@ -185,6 +186,8 @@ class Lexer(object):
                     token = Token(type="PR_RETURN", value="return")
                 elif token.value == 'string':
                     token = Token(type="PR_STRING", value="string")
+                elif token.value == 'print':
+                    token = Token(type="PR_PRINT", value="print")    
 
 
             self.cadena = ""
