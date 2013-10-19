@@ -10,6 +10,7 @@ Basado en PLY (Python Lex-Yacc)
 """
 import ply.yacc as yacc
 from lexer import Lexer, tokens
+from tabla_sim import TablaSim
 import sys
 
 def concatena(lista):
