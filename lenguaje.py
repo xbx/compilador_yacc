@@ -145,8 +145,8 @@ def p_sentencia(p):
     sentencia : sentencia_percent
     """
     p[0] = p[1]
-
     
+
 def p_sentencia_sentencia(p):
     """
     sentencia : sentencia FIN_LINEA sentencia
