@@ -142,6 +142,7 @@ def p_sentencia(p):
     sentencia : sentencia_condicional
     sentencia : sentencia_while
     sentencia : sentencia_print
+    sentencia : sentencia_percent
     """
     p[0] = p[1]
 
@@ -175,6 +176,14 @@ def p_sentencia_condicional(p):
     p[0] = get_nro_regla()
     # (if, condicion, bloque)
     crea_terceto(p[1], p[2], p[5])
+    
+def p_sentencia_percent(p):
+    """
+    sentencia_percent : PR_PERCENT factor COMA factor
+    """
+    p[0] = get_nro_regla()
+    # ej: (percent, expresion, expresion)
+    crea_terceto(p[1], p[2], p[4])
 
 def p_asig(p):
     """
