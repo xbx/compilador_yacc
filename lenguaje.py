@@ -199,6 +199,14 @@ def p_condicion(p):
     # ej: (<, expresion, expresion)
     crea_terceto(p[2], p[1], p[3])
 
+def p_condicion_between(p):
+    """
+    condicion : factor PR_BETWEEN factor PR_AND factor
+    """
+    p[0] = get_nro_regla()
+    # ej: (<, expresion, expresion)
+    crea_terceto(p[2], p[1], p[3], p[5])
+
 def p_expresion(p):
     """
     expresion : expresion OP_SUMA termino

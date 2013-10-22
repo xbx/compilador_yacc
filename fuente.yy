@@ -3,4 +3,7 @@ dec:
     int: a
 endec
 print a
-a = "es una cadena"
+
+if a between b & d:
+    print c
+

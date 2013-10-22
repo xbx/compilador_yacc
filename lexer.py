@@ -38,7 +38,8 @@ tokens = [
    'PAREN_ABRE',
    'PAREN_CIERRA',
    'COMA',
-   'PR_PRINT'
+   'PR_PRINT',
+   'PR_BETWEEN',
 ]
 
 class Token(object):
@@ -187,8 +188,9 @@ class Lexer(object):
                 elif token.value == 'string':
                     token = Token(type="PR_STRING", value="string")
                 elif token.value == 'print':
-                    token = Token(type="PR_PRINT", value="print")    
-
+                    token = Token(type="PR_PRINT", value="print")
+                elif token.value == 'between':
+                    token = Token(type="PR_BETWEEN", value="between")
 
             self.cadena = ""
             # retorno del/de los token/s
