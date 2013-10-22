@@ -40,7 +40,7 @@ tokens = [
    'COMA',
    'PR_PRINT',
    'PR_BETWEEN',
-   'PR_PERCENTY',
+   'PR_PERCENT',
 ]
 
 class Token(object):
