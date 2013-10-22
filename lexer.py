@@ -40,6 +40,7 @@ tokens = [
    'COMA',
    'PR_PRINT',
    'PR_BETWEEN',
+   'PR_PERCENTY',
 ]
 
 class Token(object):
@@ -191,6 +192,8 @@ class Lexer(object):
                     token = Token(type="PR_PRINT", value="print")
                 elif token.value == 'between':
                     token = Token(type="PR_BETWEEN", value="between")
+                elif token.value == 'percent':
+                    token = Token(type="PR_PERCENT", value="percent")
 
             self.cadena = ""
             # retorno del/de los token/s
