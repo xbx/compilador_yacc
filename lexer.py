@@ -207,7 +207,7 @@ class Lexer(object):
     def token(self):
         try:
             token = self.generate.next()
-            #print token
+            print token
             return token
         except StopIteration:
             return None
