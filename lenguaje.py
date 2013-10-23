@@ -309,15 +309,14 @@ except:
     filename = "fuente.zz"
 fuente = open(filename).read()
 
-#print "Tokens: "
 result = yyparse.parse(fuente, lexer=yylex)
-#if result is not None:
-#    print "\nTercetos:\n"
-#    for i, terceto in enumerate(tercetos):
-#        print "%s: %s" % (i, terceto)
-#else:
-#    print "\nError!!"
-
+if result is not None:
+    archivo = open('intermedia.txt', 'w')
+    for i, terceto in enumerate(tercetos):
+        archivo.write("%s: %s\n" % (i, terceto))
+    archivo.close()
+else:
+    print "\nError!!"    
 # while True:
     # s = "2+3"
 #    s = raw_input("test> ")
