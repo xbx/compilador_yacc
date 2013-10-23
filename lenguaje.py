@@ -8,6 +8,7 @@ Basado en PLY (Python Lex-Yacc)
     http://www.dabeaz.com/ply/
     Ej: http://www.dalkescientific.com/writings/NBN/parsing_with_ply.html
 """
+# coding=utf8
 import ply.yacc as yacc
 from lexer import Lexer, tokens
 from tabla_sim import TablaSim
@@ -24,6 +25,8 @@ def concatena(lista):
     return string
 
 tercetos = []
+tabla_sim = TablaSim()
+tabla_sim.ambito_actual = 'main'
 
 def crea_terceto(*args):
     """ Crea y agrega un terceto (string) a la lista """
@@ -57,11 +60,13 @@ def p_bloque_dec(p):
      'PR_ENDEC FIN_LINEA ')
     p[0] = p[4]
 
+    if tabla_sim.ambito_actual == 'main':
+        # Reseteamos ambito_actual una vez que lo usa el main para su dec.
+        tabla_sim.ambito_actual = None
+
 def p_declaraciones(p):
     'declaraciones : declaracion FIN_LINEA declaraciones'
     p[0] = get_nro_regla()
-    # aca actualizar la tabla de simbolos
-    # No habria que crear tercetos
     crea_terceto(p[1], p[3])
 
 def p_declaraciones_simple(p):
@@ -74,6 +79,9 @@ def p_declaracion(p):
     """
     p[0] = get_nro_regla()
     crea_terceto(p[1], p[3])
+
+    # Tabla de simbolos
+    tabla_sim.declarar_variable(tipo=p[1], lista_ids=p[3])
 
 def p_lista_ids(p):
     """
@@ -114,6 +122,9 @@ def p_funcion(p):
      )
     p[0] = get_nro_regla()
     crea_terceto(p[2], p[4], p[6])
+
+    # Tabla de simbolos
+    tabla_sim.declarar_funcion(nombre=p[2])
 
 def p_tipo_dato(p):
     """
@@ -264,6 +275,11 @@ print '\nTokens:\n=======\n'
 result = yyparse.parse(fuente, lexer=yylex)
 
 if result is not None:
+    print '\Simbolos:\n=========\n'
+    with open('simbolos.txt', 'w') as archivo:
+            print tabla_sim
+            archivo.write("%s\n" % tabla_sim)
+
     print '\nTercetos:\n=========\n'
     with open('intermedia.txt', 'w') as archivo:
         for i, terceto in enumerate(tercetos):

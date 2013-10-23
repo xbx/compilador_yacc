@@ -15,6 +15,13 @@ def funcion1: float
     a = 3
 return a
 
+def funcion2: float
+    dec:
+        int: bdefun2
+    endec
+    a = 3
+return a
+
 ## constante string
 str = "test de una cadena"
 

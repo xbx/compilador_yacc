@@ -5,6 +5,7 @@ Mariano Francischini, Alejandro Giorgi, Roberto Bravo
 
 TP Compilador - Analizador Lexico
 """
+# coding=utf8
 import re
 tokens = [
    'ID',
