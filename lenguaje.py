@@ -275,7 +275,7 @@ print '\nTokens:\n=======\n'
 result = yyparse.parse(fuente, lexer=yylex)
 
 if result is not None:
-    print '\Simbolos:\n=========\n'
+    print '\nSimbolos:\n=========\n'
     with open('simbolos.txt', 'w') as archivo:
             print tabla_sim
             archivo.write("%s\n" % tabla_sim)
