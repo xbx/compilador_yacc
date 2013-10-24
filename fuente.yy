@@ -12,4 +12,4 @@ def f1: float
     print a
 return b
 
-a = b
+print a

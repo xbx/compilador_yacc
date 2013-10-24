@@ -1,5 +1,5 @@
 # coding=utf8
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 
 class Val():
     """ Tipos de simbolos """
@@ -20,7 +20,8 @@ class Simbolo():
 
 class TablaSim():
     def __init__(self):
-        self.tabla = OrderedDict()
+        lista = lambda:defaultdict(lista)
+        self.tabla = lista()
         self.declaraciones = {}
         self.ambito_actual = None
         self.ultimo_id = 0
@@ -28,7 +29,7 @@ class TablaSim():
     def declarar_variable(self, tipo, lista_ids):
         """
          TODO: cuando se declaran varias variables juntas (con ","), no llega
-               esta lista con coma sino algo como "[2]" (la ref al terceto)
+               esta lista con coma sino algo como "ter[2]" (la ref al terceto)
         """
         lista_ids = lista_ids.split(',')
         for nombre in lista_ids:
@@ -40,7 +41,7 @@ class TablaSim():
             simbolo.ambito = self.ambito_actual
 
             if self.ambito_actual == 'main':
-                self.tabla[nombre] = simbolo
+                self.insertar_en_tabla(simbolo)
             else:
                 # Lo ponemos en otra lista provisoriamente porque
                 # "todavia" no sabemos de qué ambito se trata
@@ -56,7 +57,7 @@ class TablaSim():
         simbolo.nombre = nombre
         simbolo.tipo = Val.S_TIPO_FUNCION
         simbolo.ambito = 'main'  # Toda funcion esta en ambito main
-        self.tabla[nombre] = simbolo
+        self.insertar_en_tabla(simbolo)
 
         # Agregamos sus declaraciones que hasta el momento no se sabia
         # de que funcion eran:
@@ -68,14 +69,20 @@ class TablaSim():
     def obtener_variable(self, nombre):
         if nombre in self.declaraciones:
             return self.declaraciones[nombre]
-        if nombre in self.tabla and self.tabla[nombre].ambito == 'main':
-            return self.tabla[nombre]
+        if 'main' in self.tabla and nombre in self.tabla['main']:
+            return self.tabla['main'][nombre]
 
         raise TypeError("Error: Variable '%s' no declarada en ambito actual." % nombre)
 
+    def insertar_en_tabla(self, simbolo):
+        self.tabla[simbolo.ambito][simbolo.nombre] = simbolo
 
     def __str__(self):
         string = "Id Nombre Tipo Ambito\n"
         for _, simbolo in self.tabla.items():
-            string = string + str(simbolo) + "\n"
+            if isinstance(simbolo, Simbolo):
+                string = string + str(simbolo) + "\n"
+            else:
+                for _, simbolo2 in simbolo.items():
+                    string = string + str(simbolo2) + "\n"
         return string
