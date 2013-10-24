@@ -1,11 +1,15 @@
 ## test
 dec:
     int: a
+    float: b
 endec
-print a
 
-if a between b & d:
-    print c
+def f1: float
+    dec:
+        int: a
+        float: b
+    endec
+    print a
+return b
 
-
-percent 1850,10
+a = b

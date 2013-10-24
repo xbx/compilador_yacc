@@ -15,6 +15,8 @@ class Simbolo():
         self.ambito = None
     def __str__(self):
         return "%s   | %s   | %s   | %s " % (self.id, self.nombre, self.tipo, self.ambito)
+    def __repr__(self):
+        return "sim[%s]" % self.id
 
 class TablaSim():
     def __init__(self):
@@ -44,7 +46,7 @@ class TablaSim():
                 # "todavia" no sabemos de qué ambito se trata
                 self.declaraciones[nombre] = simbolo
 
-        return self.ultimo_id
+        return simbolo
 
     def declarar_funcion(self, nombre):
         # Agregamos el simbolo 'funcion'
@@ -62,6 +64,15 @@ class TablaSim():
             simbolo.ambito = nombre
             self.tabla[nombre_variable] = simbolo
         self.declaraciones = {}
+
+    def obtener_variable(self, nombre):
+        if nombre in self.declaraciones:
+            return self.declaraciones[nombre]
+        if nombre in self.tabla and self.tabla[nombre].ambito == 'main':
+            return self.tabla[nombre]
+
+        raise TypeError("Error: Variable '%s' no declarada en ambito actual." % nombre)
+
 
     def __str__(self):
         string = "Id Nombre Tipo Ambito\n"

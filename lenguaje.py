@@ -36,7 +36,7 @@ nro_regla = 0
 def get_nro_regla():
     """ Contador de numero de regla 'actual'. Incrementa a medida que se crean"""
     global nro_regla
-    regla = "[%s]" % nro_regla
+    regla = "ter[%s]" % nro_regla
     nro_regla += 1
     return regla
 
@@ -49,8 +49,7 @@ def get_nro_regla():
 def p_programa(p):
     'programa : bloque_dec main'
     p[0] = get_nro_regla()
-    crea_terceto(p[1], p[2])
-    # Traduccion a assembler aca
+    crea_terceto(p[2])
 
 def p_bloque_dec(p):
     ('bloque_dec : PR_DEC DOS_PUNTOS '
@@ -66,22 +65,22 @@ def p_bloque_dec(p):
 
 def p_declaraciones(p):
     'declaraciones : declaracion FIN_LINEA declaraciones'
-    p[0] = get_nro_regla()
-    crea_terceto(p[1], p[3])
+    pass
 
 def p_declaraciones_simple(p):
     'declaraciones : declaracion'
-    p[0] = p[1]
+    pass
 
 def p_declaracion(p):
     """
     declaracion : tipo_dato DOS_PUNTOS lista_ids
     """
-    p[0] = get_nro_regla()
-    crea_terceto(p[1], p[3])
-
     # Tabla de simbolos
-    tabla_sim.declarar_variable(tipo=p[1], lista_ids=p[3])
+    # TODO: Solo acepta la declaracion de un ID en lista_ids
+    simbolo = tabla_sim.declarar_variable(tipo=p[1], lista_ids=p[3])
+
+    p[0] = repr(simbolo)
+
 
 def p_lista_ids(p):
     """
@@ -121,10 +120,14 @@ def p_funcion(p):
         'PR_RETURN expresion FIN_LINEA'
      )
     p[0] = get_nro_regla()
-    crea_terceto(p[2], p[4], p[6])
+    # Terceto: id, tipo_dato, bloque, return_expresion
+    crea_terceto(p[2], p[4], p[7], p[10])
 
     # Tabla de simbolos
     tabla_sim.declarar_funcion(nombre=p[2])
+
+    # Termina la funcion. Volvemos a ambito main
+    tabla_sim.ambito_actual = 'main'
 
 def p_tipo_dato(p):
     """
@@ -169,6 +172,8 @@ def p_sentencia_print(p):
     sentencia_print : PR_PRINT ID
     """
     p[0] = get_nro_regla()
+    simbolo = tabla_sim.obtener_variable(p[2])
+    crea_terceto(p[1], repr(simbolo))
 
 def p_sentencia_while(p):
     """
