@@ -1,14 +1,17 @@
 ## test
 dec:
-    int: amain
+    int: a
 endec
 
 def f1: float
     dec:
-        int: af1
+        int: b
     endec
-    print af1
-return af1
+    print b
+return b
 
-print amain
-
+if a==9:
+    print a
+else
+    print a
+print a
