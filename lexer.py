@@ -20,6 +20,7 @@ tokens = [
    'ABRE_BLOQUE',
    'CIERRA_BLOQUE',
    'PR_IF',
+   'PR_ELSE',
    'DOS_PUNTOS',
    'OP_MAYOR',
    'OP_MENOR',
@@ -195,6 +196,8 @@ class Lexer(object):
                     token = Token(type="PR_BETWEEN", value="between")
                 elif token.value == 'percent':
                     token = Token(type="PR_PERCENT", value="percent")
+                elif token.value == 'else':
+                    token = Token(type="PR_ELSE", value="else")
 
             self.cadena = ""
             # retorno del/de los token/s
