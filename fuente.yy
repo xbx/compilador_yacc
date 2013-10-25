@@ -1,15 +1,14 @@
 ## test
 dec:
-    int: a
-    float: b
+    int: amain
 endec
 
 def f1: float
     dec:
-        int: a
-        float: b
+        int: af1
     endec
-    print a
-return b
+    print af1
+return af1
 
-print a
+print amain
+

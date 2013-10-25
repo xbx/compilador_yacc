@@ -1,11 +1,12 @@
 # coding=utf8
-from collections import OrderedDict, defaultdict
+from collections import defaultdict
 
 class Val():
     """ Tipos de simbolos """
     S_TIPO_INT = 'int'
     S_TIPO_FLOAT = 'float'
     S_TIPO_FUNCION = 'funcion'
+    S_TIPO_CTE_STRING = 'cte_string'
 
 class Simbolo():
     def __init__(self):
@@ -13,10 +14,10 @@ class Simbolo():
         self.nombre = None
         self.tipo = None
         self.ambito = None
-    def __str__(self):
-        return "%s   | %s   | %s   | %s " % (self.id, self.nombre, self.tipo, self.ambito)
     def __repr__(self):
-        return "sim[%s]" % self.id
+        return "%s   | %s   | %s   | %s " % (self.id, self.nombre, self.tipo, self.ambito)
+    def __str__(self):
+        return "sim%s[%s:%s]" % (self.id, self.tipo, self.nombre)
 
 class TablaSim():
     def __init__(self):
@@ -45,8 +46,24 @@ class TablaSim():
             else:
                 # Lo ponemos en otra lista provisoriamente porque
                 # "todavia" no sabemos de qué ambito se trata
-                self.declaraciones[nombre] = simbolo
+                self.declaraciones[simbolo.nombre] = simbolo
 
+        return simbolo
+
+    def declarar_cte_string(self, string):
+        simbolo = Simbolo()
+        simbolo.id = self.ultimo_id
+        self.ultimo_id = self.ultimo_id + 1
+        simbolo.nombre = '_CTE_STRING_' + str(simbolo.id)
+        simbolo.tipo = Val.S_TIPO_CTE_STRING
+        simbolo.ambito = self.ambito_actual
+
+        if self.ambito_actual == 'main':
+            self.insertar_en_tabla(simbolo)
+        else:
+            # Lo ponemos en otra lista provisoriamente porque
+            # "todavia" no sabemos de qué ambito se trata
+            self.declaraciones[simbolo.nombre] = simbolo
         return simbolo
 
     def declarar_funcion(self, nombre):
@@ -61,10 +78,11 @@ class TablaSim():
 
         # Agregamos sus declaraciones que hasta el momento no se sabia
         # de que funcion eran:
-        for nombre_variable, simbolo in self.declaraciones.items():
-            simbolo.ambito = nombre
-            self.tabla[nombre_variable] = simbolo
+        for _, item in self.declaraciones.items():
+            item.ambito = nombre
+            self.insertar_en_tabla(item)
         self.declaraciones = {}
+        return simbolo
 
     def obtener_variable(self, nombre):
         if nombre in self.declaraciones:
@@ -81,8 +99,8 @@ class TablaSim():
         string = "Id Nombre Tipo Ambito\n"
         for _, simbolo in self.tabla.items():
             if isinstance(simbolo, Simbolo):
-                string = string + str(simbolo) + "\n"
+                string = string + repr(simbolo) + "\n"
             else:
                 for _, simbolo2 in simbolo.items():
-                    string = string + str(simbolo2) + "\n"
+                    string = string + repr(simbolo2) + "\n"
         return string

@@ -2,9 +2,17 @@
 ## LYC - Bravo, Giorgi, Francisichini
 
 dec:
-    int: a,c,d
+    int: a
     float: b
+    int: s
     string: str
+    int: foo
+    string: baz
+    int: bar
+    int: u
+    int: x
+    int: c
+    float: d
 endec
 
 ## funcion
@@ -19,14 +27,14 @@ def funcion2: float
     dec:
         int: bdefun2
     endec
-    a = 3
+    print bdefun2
 return a
 
 ## constante string
 str = "test de una cadena"
 
 ## Asignacion
-foo = bar + baz
+bar = baz + foo
 
 ## Condicional / anidamiento
 if a > b & b < u:
@@ -39,7 +47,9 @@ if a > b & b < u:
 a = 2 + 2
 
 
+## Print
 a = 2 * b - 3
+print a
 
 ## Asociativiadad
 a = 2 * (b - 3)
@@ -48,5 +58,3 @@ c = 2 / b
 if a > b & b < u:
     while a > b:
         c = d
-        if c > 1:
-            oka = 1
