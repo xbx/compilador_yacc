@@ -197,6 +197,15 @@ def p_sentencia_condicional(p):
     'sentencia_condicional : PR_IF condicion DOS_PUNTOS ABRE_BLOQUE bloque CIERRA_BLOQUE'
     # (if, condicion, bloque)
     p[0] = Terceto(p[1], p[2], p[5])
+    
+def p_sentencia_condicional_else(p):
+    """
+     sentencia_condicional : PR_IF condicion DOS_PUNTOS ABRE_BLOQUE bloque CIERRA_BLOQUE PR_ELSE ABRE_BLOQUE bloque CIERRA_BLOQUE
+     
+    """
+    # (if, condicion, bloque, else, bloque)
+    p[0] = Terceto(p[1], p[2], p[5], p[7], p[9])
+
 
 def p_sentencia_percent(p):
     """
@@ -221,6 +230,7 @@ def p_cte_string(p):
 
 def p_condicion(p):
     """
+    condicion : expresion OP_IGUALDAD expresion
     condicion : expresion OP_MAYOR expresion
     condicion : expresion OP_MENOR expresion
     condicion : expresion OP_MENORIGUAL expresion
