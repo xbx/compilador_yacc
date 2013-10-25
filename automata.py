@@ -95,8 +95,13 @@ matriz = {
         (Val.CUALQUIER, ["F", 'OP_MENORIGUAL', '', Lexer.acc_NADA]),
     ]),
     "17": OrderedDict([
+        ('=', ["18", "", '', Lexer.acc_NADA]),
         (Val.CUALQUIER, [Val.E_FINAL, "OP_AS", "=", Lexer.acc_NADA]),
     ]),
+        "18": OrderedDict([
+        (Val.CUALQUIER, ["F", 'OP_IGUALDAD', '', Lexer.acc_NADA]),
+    ]),
+    
     "20": OrderedDict([
         ("[0-9]", ["20", "", "", Lexer.acc_NADA]),
         ("\.", ["20.1", "", "", Lexer.acc_NADA]),
