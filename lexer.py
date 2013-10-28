@@ -28,6 +28,7 @@ tokens = [
    'OP_MUL',
    'OP_DIV',
    'OP_RESTA',
+   'OP_IGUALDAD',
    'PR_AND',
    'PR_OR',
    'PR_INT',
