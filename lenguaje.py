@@ -57,6 +57,10 @@ def get_nro_regla():
     nro_regla += 1
     return regla
 
+def verificarAsignacion(simboloIzquierda, simboloDerecha):
+    if simboloIzquierda.tipo != simboloDerecha.tipo:
+        raise TypeError("Error: No se puede asignar un '%s' a un '%s'." % (simboloDerecha.tipo, simboloIzquierda.tipo)) 
+
 """
     ###############################
     BNF y mapeo al codigo resultado
@@ -230,6 +234,9 @@ def p_asig(p):
     asig : ID OP_AS cte_string
     """
     simbolo = tabla_sim.obtener_variable(p[1])
+    
+    verificarAsignacion(simbolo, p[3])
+    
     # (=, ID, exp)
     p[0] = Terceto(p[2], simbolo, p[3], tipo="asig")
 
