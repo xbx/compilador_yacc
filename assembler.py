@@ -11,27 +11,51 @@ class TraductorAsm:
     def traducir(self, filename):
         """ Traduce la notacion intermedia a texto assembler """
 
+        # declaraciones de tabla de simbolos
+        self.declaraciones_main()
+
         self.asm_terceto = OrderedDict()
 
         for terceto in self.tercetos:
-            if terceto.tipo == "print":
+            if terceto.tipo == "sentencia":
+                asm = ""
+                for item in terceto.items:
+                    try:  # TODO: hardcode, hay que soportar todas las sentencias
+                        asm = asm + self.asm_terceto[item.id]
+                    except:
+                        pass
+                self.asm_terceto[terceto.id] = asm
+            elif terceto.tipo == "asig":
+                asm = "mov dword [ebp+%s], %s ; asig" % (terceto.items[0].offset, terceto.items[1])
+                self.asm_terceto[terceto.id] = asm
+            elif terceto.tipo == "print":
                 asm = Asm.print_
                 simbolo = terceto.items[0]
-                asm = asm.replace('%string', simbolo.offset or '')
-                # asm = asm.replace('%len', len(simbolo.valor))
+                asm = asm.replace('%string', 'str')  # TODO: hardcode string
+                asm = asm.replace('%len', 'str_len')  # TODO: hardcode len
                 self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == 'funcion':
                 simbolo = terceto.items[0]
+
                 asm = Asm.funcion
+                declaraciones = self.declaraciones_funcion(simbolo_funcion=simbolo)
+
+                asm = asm.replace('%declaraciones', declaraciones)
                 asm = asm.replace('%nombre', simbolo.nombre)
-                asm = asm.replace('%declaraciones', '')
-                asm = asm.replace('%bloque', '')
+
+                # cuerpo de la funcion
+                terceto_id = terceto.items[2].id
+
+                # TODO: hardcode. Deberia siempre encontrarse el ASM expandido
+                #        para el cuerpo de la funcion
+                try:
+                    asm = asm.replace('%bloque', self.asm_terceto[terceto_id])
+                except KeyError:
+                    asm = asm.replace('%bloque', '')
+
                 self.asm_terceto[terceto.id] = asm
-                # funciones
                 self.asm = self.asm.replace('%funciones', asm)
 
-        # declaraciones globales
-        self.declaraciones_main()
 
 
         # Print hola mundo
@@ -51,16 +75,25 @@ class TraductorAsm:
         system("./%s" % ejecutable)
 
     def declaraciones_main(self):
-        offset = 0
+        offset = {}
 
         for simbolo in self.tabla_sim:
-            if simbolo.ambito == 'main':
-                offset = offset + 4
-                simbolo.offset = offset
-        declaraciones = ("; declaraciones\n"
-                             + "\tmov    esp, %s\n" % offset)
+            try:
+                offset[simbolo.ambito] = offset[simbolo.ambito] + 4
+            except KeyError:
+                offset[simbolo.ambito] = 0
+            simbolo.offset = offset[simbolo.ambito]
+        declaraciones_main = ("; declaraciones\n"
+                             + "\tmov    esp, %s\n" % offset['main'])
+        self.asm = self.asm.replace("%declaraciones_start", declaraciones_main)
 
-        self.asm = self.asm.replace("%declaraciones_start", declaraciones)
+    def declaraciones_funcion(self, simbolo_funcion):
+        offset = 0
+        for simbolo in self.tabla_sim:
+            if simbolo.ambito == simbolo_funcion.nombre and simbolo.offset > offset:
+                offset = simbolo.offset
+        declaraciones = "mov    esp, %s\n" % offset
+        return declaraciones
 
 
 
@@ -108,10 +141,15 @@ global %nombre
 %nombre:
         push    ebp
         mov     esp, ebp
-        
+
+        ; declaraciones
         %declaraciones
+        ; fin declaraciones
+
+        ; bloque
         %bloque
-        
+        ; fin bloque
+
         pop     ebp
         mov     ebp, esp
         ret

@@ -47,7 +47,7 @@ class Terceto():
         items = []
         for item in self.items:
             items.append(str(item))
-        return "%s: (%s)" % (self.id, ', '.join(items))
+        return "%s: %s(%s)" % (self.id, self.tipo, ', '.join(items))
 
 nro_regla = 0
 def get_nro_regla():
@@ -230,7 +230,7 @@ def p_asig(p):
      # verificarAsignacion(simbolo, p[3])
 
     # (=, ID, exp)
-    p[0] = Terceto(p[2], simbolo, p[3], tipo="asig")
+    p[0] = Terceto(simbolo, p[3], tipo="asig")
 
 def p_cte_string(p):
     """ cte_string : CTE_STRING """
