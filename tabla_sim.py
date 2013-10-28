@@ -29,26 +29,24 @@ class TablaSim():
         self.ambito_actual = None
         self.ultimo_id = 0
 
-    def declarar_variable(self, tipo, lista_ids):
+    def declarar_variable(self, tipo, nombre):
         """
          TODO: cuando se declaran varias variables juntas (con ","), no llega
                esta lista con coma sino algo como "ter[2]" (la ref al terceto)
         """
-        lista_ids = lista_ids.split(',')
-        for nombre in lista_ids:
-            simbolo = Simbolo()
-            simbolo.id = self.ultimo_id
-            self.ultimo_id = self.ultimo_id + 1
-            simbolo.nombre = nombre
-            simbolo.tipo = tipo
-            simbolo.ambito = self.ambito_actual
+        simbolo = Simbolo()
+        simbolo.id = self.ultimo_id
+        self.ultimo_id = self.ultimo_id + 1
+        simbolo.nombre = nombre
+        simbolo.tipo = tipo
+        simbolo.ambito = self.ambito_actual
 
-            if self.ambito_actual == 'main':
-                self.insertar_en_tabla(simbolo)
-            else:
-                # Lo ponemos en otra lista provisoriamente porque
-                # "todavia" no sabemos de qué ambito se trata
-                self.declaraciones[simbolo.nombre] = simbolo
+        if self.ambito_actual == 'main':
+            self.insertar_en_tabla(simbolo)
+        else:
+            # Lo ponemos en otra lista provisoriamente porque
+            # "todavia" no sabemos de qué ambito se trata
+            self.declaraciones[simbolo.nombre] = simbolo
 
         return simbolo
 

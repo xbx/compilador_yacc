@@ -59,7 +59,7 @@ def get_nro_regla():
 
 def verificarAsignacion(simboloIzquierda, simboloDerecha):
     if simboloIzquierda.tipo != simboloDerecha.tipo:
-        raise TypeError("Error: No se puede asignar un '%s' a un '%s'." % (simboloDerecha.tipo, simboloIzquierda.tipo)) 
+        raise TypeError("Error: No se puede asignar un '%s' a un '%s'." % (simboloDerecha.tipo, simboloIzquierda.tipo))
 
 """
     ###############################
@@ -67,8 +67,7 @@ def verificarAsignacion(simboloIzquierda, simboloDerecha):
     Start Symbol: "programa"
     ###############################
 """
-lista_ids = []
- 
+
 def p_programa(p):
     'programa : bloque_dec main'
     p[0] = Terceto(p[2], tipo="programa")
@@ -100,28 +99,21 @@ def p_declaracion(p):
     """
     # Tabla de simbolos
     # TODO: Solo acepta la declaracion de un ID en lista_ids
-    for variable in lista_ids:
+    for variable in p[3]:
         tabla_sim.declarar_variable(p[1], variable)
-    del lista_ids[0:len(lista_ids)]    
-    #simbolo = tabla_sim.declarar_variable(tipo=p[1], lista_ids=p[3])
-
-    #p[0] = simbolo
-
 
 def p_lista_ids(p):
     """
     lista_ids : ID COMA lista_ids
     """
-    lista_ids.append(p[1])
-    p[0] = Terceto(p[1], p[3], tipo="lista_ids")
+    p[0] = [p[1]] + p[3]
 
 
 def p_lista_ids_simple(p):
     """
     lista_ids : ID
     """
-    lista_ids.append(p[1])
-    p[0] = p[1]
+    p[0] = [p[1]]
 
 def p_main(p):
     """
@@ -234,9 +226,9 @@ def p_asig(p):
     asig : ID OP_AS cte_string
     """
     simbolo = tabla_sim.obtener_variable(p[1])
-    
-    verificarAsignacion(simbolo, p[3])
-    
+
+     # verificarAsignacion(simbolo, p[3])
+
     # (=, ID, exp)
     p[0] = Terceto(p[2], simbolo, p[3], tipo="asig")
 

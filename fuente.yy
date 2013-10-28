@@ -5,12 +5,10 @@ endec
 
 def f1: float
     dec:
-        int: b
+        int: b,c
     endec
-    print b
+    print c
 return b
-
-a = "ok!!"
 
 if a==9:
     print a

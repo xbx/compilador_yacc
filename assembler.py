@@ -45,7 +45,7 @@ class TraductorAsm:
 
     def compilar(self, asm, ejecutable):
         system("/bin/nasm -f elf -F stabs -o programa.o %s" % asm)
-        system("ld -o %s programa.o" % ejecutable)
+        system("ld -m elf_i386 -o %s programa.o" % ejecutable)
 
     def ejecutar(self, ejecutable):
         system("./%s" % ejecutable)
