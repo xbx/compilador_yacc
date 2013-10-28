@@ -60,6 +60,8 @@ def get_nro_regla():
     Start Symbol: "programa"
     ###############################
 """
+lista_ids = []
+ 
 def p_programa(p):
     'programa : bloque_dec main'
     p[0] = Terceto(p[2])
@@ -91,15 +93,19 @@ def p_declaracion(p):
     """
     # Tabla de simbolos
     # TODO: Solo acepta la declaracion de un ID en lista_ids
-    simbolo = tabla_sim.declarar_variable(tipo=p[1], lista_ids=p[3])
+    for variable in lista_ids:
+        tabla_sim.declarar_variable(p[1], variable)
+    del lista_ids[0:len(lista_ids)]    
+    #simbolo = tabla_sim.declarar_variable(tipo=p[1], lista_ids=p[3])
 
-    p[0] = simbolo
+    #p[0] = simbolo
 
 
 def p_lista_ids(p):
     """
     lista_ids : ID COMA lista_ids
     """
+    lista_ids.append(p[1])
     p[0] = Terceto(p[1], p[3])
 
 
@@ -107,6 +113,7 @@ def p_lista_ids_simple(p):
     """
     lista_ids : ID
     """
+    lista_ids.append(p[1])
     p[0] = p[1]
 
 def p_main(p):
