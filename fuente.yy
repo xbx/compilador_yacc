@@ -10,6 +10,8 @@ def f1: float
     print b
 return b
 
+a = "ok!!"
+
 if a==9:
     print a
 else

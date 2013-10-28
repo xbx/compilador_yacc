@@ -14,8 +14,10 @@ class Simbolo():
         self.nombre = None
         self.tipo = None
         self.ambito = None
+        self.offset = None # Para la generacion de Asm
+        self.valor = None # Para la generacion de Asm (cte string)
     def __repr__(self):
-        return "%s   | %s   | %s   | %s " % (self.id, self.nombre, self.tipo, self.ambito)
+        return "%s   | %s   | %s   | %s   |  %s" % (self.id, self.nombre, self.tipo, self.ambito, self.offset)
     def __str__(self):
         return "sim%s[%s:%s]" % (self.id, self.tipo, self.nombre)
 
@@ -56,14 +58,10 @@ class TablaSim():
         self.ultimo_id = self.ultimo_id + 1
         simbolo.nombre = '_CTE_STRING_' + str(simbolo.id)
         simbolo.tipo = Val.S_TIPO_CTE_STRING
-        simbolo.ambito = self.ambito_actual
+        simbolo.ambito = self.ambito_actual or "main"
+        simbolo.valor = string
 
-        if self.ambito_actual == 'main':
-            self.insertar_en_tabla(simbolo)
-        else:
-            # Lo ponemos en otra lista provisoriamente porque
-            # "todavia" no sabemos de qué ambito se trata
-            self.declaraciones[simbolo.nombre] = simbolo
+        self.insertar_en_tabla(simbolo)
         return simbolo
 
     def declarar_funcion(self, nombre):
@@ -95,12 +93,16 @@ class TablaSim():
     def insertar_en_tabla(self, simbolo):
         self.tabla[simbolo.ambito][simbolo.nombre] = simbolo
 
-    def __str__(self):
-        string = "Id Nombre Tipo Ambito\n"
+    def __iter__(self):
         for _, simbolo in self.tabla.items():
             if isinstance(simbolo, Simbolo):
-                string = string + repr(simbolo) + "\n"
+                yield simbolo
             else:
                 for _, simbolo2 in simbolo.items():
-                    string = string + repr(simbolo2) + "\n"
+                    yield simbolo2
+
+    def __str__(self):
+        string = "Id   Nombre Tipo   Ambito  Offset stack\n"
+        for simbolo in self:
+            string = string + repr(simbolo) + "\n"
         return string

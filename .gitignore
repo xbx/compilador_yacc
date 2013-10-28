@@ -39,3 +39,6 @@ parsetab.py
 intermedia.txt
 .settings
 simbolos.txt
+*.asm
+*.o
+programa
