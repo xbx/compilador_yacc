@@ -30,8 +30,11 @@ tabla_sim.ambito_actual = 'main'
 class Terceto():
     lista = []
 
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
         """ Crea y agrega un terceto a la lista """
+
+        self.tipo = kwargs['tipo']
+
         self.items = args
         self.id = len(Terceto.lista)
 
@@ -64,7 +67,7 @@ lista_ids = []
  
 def p_programa(p):
     'programa : bloque_dec main'
-    p[0] = Terceto(p[2])
+    p[0] = Terceto(p[2], tipo="programa")
 
 
 def p_bloque_dec(p):
@@ -106,7 +109,7 @@ def p_lista_ids(p):
     lista_ids : ID COMA lista_ids
     """
     lista_ids.append(p[1])
-    p[0] = Terceto(p[1], p[3])
+    p[0] = Terceto(p[1], p[3], tipo="lista_ids")
 
 
 def p_lista_ids_simple(p):
@@ -121,7 +124,7 @@ def p_main(p):
     main : main bloque
     main : main funcion
     """
-    p[0] = Terceto(p[1], p[2])
+    p[0] = Terceto(p[1], p[2], tipo="main")
 
 
 def p_main_simple(p):
@@ -145,7 +148,7 @@ def p_funcion(p):
     simbolo = tabla_sim.declarar_funcion(nombre=p[2])
 
     # Terceto: id, tipo_dato, bloque, return_expresion
-    p[0] = Terceto(simbolo, p[4], p[7], p[10])
+    p[0] = Terceto(simbolo, p[4], p[7], p[10], tipo="funcion")
 
     # Termina la funcion. Reset ambito
     tabla_sim.ambito_actual = None
@@ -162,7 +165,7 @@ def p_bloque(p):
     """
     bloque : sentencia bloque
     """
-    p[0] = Terceto(p[1], p[2])
+    p[0] = Terceto(p[1], p[2], tipo="bloque")
 
 def p_bloque_simple(p):
     """
@@ -184,33 +187,33 @@ def p_sentencia_sentencia(p):
     """
     sentencia : sentencia FIN_LINEA sentencia
     """
-    p[0] = Terceto(p[1], p[3])
+    p[0] = Terceto(p[1], p[3], tipo="sentencia")
 
 def p_sentencia_print(p):
     """
     sentencia_print : PR_PRINT ID
     """
     simbolo = tabla_sim.obtener_variable(p[2])
-    p[0] = Terceto(p[1], simbolo)
+    p[0] = Terceto(simbolo, tipo="print")
 
 def p_sentencia_while(p):
     """
     sentencia_while : PR_WHILE condicion DOS_PUNTOS ABRE_BLOQUE bloque CIERRA_BLOQUE
     """
     # (while, condicion, bloque)
-    p[0] = Terceto(p[1], p[2], p[5])
+    p[0] = Terceto(p[1], p[2], p[5], tipo="while")
 
 def p_sentencia_condicional(p):
     'sentencia_condicional : PR_IF condicion DOS_PUNTOS ABRE_BLOQUE bloque CIERRA_BLOQUE'
     # (if, condicion, bloque)
-    p[0] = Terceto(p[1], p[2], p[5])
-    
+    p[0] = Terceto(p[1], p[2], p[5], tipo="if")
+
 def p_sentencia_condicional_else(p):
     """
      sentencia_condicional : PR_IF condicion DOS_PUNTOS ABRE_BLOQUE bloque CIERRA_BLOQUE PR_ELSE ABRE_BLOQUE bloque CIERRA_BLOQUE     
     """
     # (if, condicion, bloque, else, bloque)
-    p[0] = Terceto(p[1], p[2], p[5], p[7], p[9])
+    p[0] = Terceto(p[1], p[2], p[5], p[7], p[9], tipo="ifelse")
 
 
 def p_sentencia_percent(p):
@@ -218,7 +221,7 @@ def p_sentencia_percent(p):
     sentencia_percent : PR_PERCENT factor COMA factor
     """
     # ej: (percent, expresion, expresion)
-    p[0] = Terceto(p[1], p[2], p[4])
+    p[0] = Terceto(p[1], p[2], p[4], tipo="percent")
 
 def p_asig(p):
     """
@@ -228,7 +231,7 @@ def p_asig(p):
     """
     simbolo = tabla_sim.obtener_variable(p[1])
     # (=, ID, exp)
-    p[0] = Terceto(p[2], simbolo, p[3])
+    p[0] = Terceto(p[2], simbolo, p[3], tipo="asig")
 
 def p_cte_string(p):
     """ cte_string : CTE_STRING """
@@ -245,14 +248,14 @@ def p_condicion(p):
     condicion : condicion PR_OR condicion
     """
     # ej: (<, expresion, expresion)
-    p[0] = Terceto(p[2], p[1], p[3])
+    p[0] = Terceto(p[2], p[1], p[3], tipo="condicion")
 
 def p_condicion_between(p):
     """
     condicion : factor PR_BETWEEN factor PR_AND factor
     """
     # ej: (<, expresion, expresion)
-    p[0] = Terceto(p[2], p[1], p[3], p[5])
+    p[0] = Terceto(p[2], p[1], p[3], p[5], tipo="condicion_between")
 
 def p_expresion(p):
     """
@@ -262,7 +265,7 @@ def p_expresion(p):
     expresion : expresion OP_DIV termino
     """
     # (+, exp, ter)
-    p[0] = Terceto(p[2], p[1], p[3])
+    p[0] = Terceto(p[2], p[1], p[3], tipo="expresion")
 
 def p_expression_term(p):
     'expresion : termino'
@@ -314,16 +317,41 @@ fuente = open(filename).read()
 print '\nTokens:\n=======\n'
 result = yyparse.parse(fuente, lexer=yylex)
 
-if result is not None:
-    print '\nSimbolos:\n=========\n'
-    with open('simbolos.txt', 'w') as archivo:
-            print tabla_sim
-            archivo.write("%s\n" % tabla_sim)
-
-    print '\nTercetos:\n=========\n'
-    with open('intermedia.txt', 'w') as archivo:
-        for terceto in Terceto.lista:
-            print repr(terceto)
-            archivo.write("%s\n" % repr(terceto))
-else:
+if result is None:
     print "\nError!!"
+    exit()
+
+# Guardamos la lista de tercetos a un archivo
+print '\nTercetos:\n=========\n'
+with open('intermedia.txt', 'w') as archivo:
+    for terceto in Terceto.lista:
+        print repr(terceto)
+        archivo.write("%s\n" % repr(terceto))
+
+# Pasaje a assembler
+SALIDA_ASM = "programa.asm"
+SALIDA_ELF = "programa"
+
+from assembler import TraductorAsm
+traductor = TraductorAsm(tercetos=Terceto.lista, tabla_sim=tabla_sim)
+traductor.traducir(SALIDA_ASM)
+print "\nSalida assembler: %s" % SALIDA_ASM
+
+if raw_input("\nCompilar asm? [Y|n] ") in ("", "Y"):
+    traductor.compilar(asm=SALIDA_ASM, ejecutable=SALIDA_ELF)
+    if raw_input("\nEjecutar %s? [Y|n] " % SALIDA_ELF) in ("", "Y"):
+        print "\n"
+        traductor.ejecutar(SALIDA_ELF)
+
+# Guardamos la tabla de simbolos a un archivo
+print '\nSimbolos:\n=========\n'
+with open('simbolos.txt', 'w') as archivo:
+        print tabla_sim
+        archivo.write("%s\n" % tabla_sim)
+
+
+
+
+
+
+
