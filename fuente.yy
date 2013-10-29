@@ -1,18 +1,15 @@
 ## test
 dec:
-    int: a
+    int: x,yb,a,j
 endec
 
-def f1: float
-    dec:
-        int: b,c
-    endec
-    b = 2
-    print c
-return b
+j = 119
 
-if a==9:
-    print a
-else
-    print a
+if j<8222:
+    print j
+
+j = 4
+if j==8:
+    print j
+
 print a

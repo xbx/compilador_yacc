@@ -1,8 +1,11 @@
 from os import system
 from collections import OrderedDict
 from tabla_sim import Simbolo
+from asm_template import Asm
 
 class TraductorAsm:
+    id_etiqueta = 0
+
     def __init__(self, tercetos, tabla_sim):
         self.tercetos = tercetos
         self.tabla_sim = tabla_sim
@@ -17,7 +20,44 @@ class TraductorAsm:
         self.asm_terceto = OrderedDict()
 
         for terceto in self.tercetos:
-            if terceto.tipo == "sentencia":
+            if terceto.tipo == "programa":
+                asm = self.asm_terceto[terceto.items[0].id]
+                # Print hola mundo
+                # asm = asm + "\n" + Asm.print_.replace("%string", "str")
+                # asm = asm.replace("%len", "str_len")
+                self.asm = self.asm.replace('%_start', asm)
+            elif terceto.tipo == "condicion":
+                asm = ""
+                if terceto.items[0] == '==':
+                    izq = self.representar_operando(terceto.items[1])
+                    der = self.representar_operando(terceto.items[2])
+                    asm = "cmp %s, %s" % (izq, der)
+                self.asm_terceto[terceto.id] = asm
+            elif terceto.tipo == "if":
+                condicion = self.asm_terceto[terceto.items[0].id]
+                bloque = self.asm_terceto[terceto.items[1].id]
+
+                tipo_condicion = terceto.items[0].items[0]
+                if tipo_condicion == '==':
+                    asm_tipo = 'jne'
+                elif tipo_condicion == '<':
+                    asm_tipo = 'jge'
+                elif tipo_condicion == '>':
+                    asm_tipo = 'jle'
+
+                asm = Asm.if_
+                asm = asm.replace('%condicion', condicion)
+                asm = asm.replace('%bloque', bloque)
+                asm = asm.replace('%etiqueta_endif', self.inventar_etiqueta(prefijo='ENDIF'))
+                asm = asm.replace('%tipo_condicion', asm_tipo)
+
+                self.asm_terceto[terceto.id] = asm
+            elif terceto.tipo == "bloque":
+                asm = ""
+                for item in terceto.items:
+                    asm = asm + self.asm_terceto[item.id]
+                self.asm_terceto[terceto.id] = asm
+            elif terceto.tipo == "sentencia":
                 asm = ""
                 for item in terceto.items:
                     try:  # TODO: hardcode, hay que soportar todas las sentencias
@@ -26,7 +66,7 @@ class TraductorAsm:
                         pass
                 self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == "asig":
-                asm = "mov dword [ebp+%s], %s ; asig" % (terceto.items[0].offset, terceto.items[1])
+                asm = "mov    DWORD [ebp-%s], %s ; asig" % (terceto.items[0].offset, terceto.items[1])
                 self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == "print":
                 asm = Asm.print_
@@ -57,11 +97,8 @@ class TraductorAsm:
                 self.asm = self.asm.replace('%funciones', asm)
 
 
-
-        # Print hola mundo
-        print_ = Asm.print_.replace("%string", "str")
-        print_ = print_.replace("%len", "str_len")
-        self.asm = self.asm.replace("%_start", print_)
+        # Limpiamos las marcas sin usar que pudieron haber quedado
+        self.limpiar_marcas()
 
         with open(filename, "w") as out:
             out.write(self.asm)
@@ -84,7 +121,7 @@ class TraductorAsm:
                 offset[simbolo.ambito] = 0
             simbolo.offset = offset[simbolo.ambito]
         declaraciones_main = ("; declaraciones\n"
-                             + "\tmov    esp, %s\n" % offset['main'])
+                             + "        sub    esp, %s\n" % offset['main'])
         self.asm = self.asm.replace("%declaraciones_start", declaraciones_main)
 
     def declaraciones_funcion(self, simbolo_funcion):
@@ -95,63 +132,18 @@ class TraductorAsm:
         declaraciones = "mov    esp, %s\n" % offset
         return declaraciones
 
+    def representar_operando(self, operando):
+        if isinstance(operando, Simbolo):
+            if operando.offset > 0:
+                return "   DWORD [ebp-%s]" % operando.offset
+            else:
+                return "   ebp"
+        elif isinstance(operando, str):
+            return operando
 
+    def limpiar_marcas(self):
+        self.asm = self.asm.replace('%funciones', '')
 
-class Asm:
-    base = (
-"""
-section .data                           ; section for initialized data
-str:     db 'Hola mundo!', 0Ah         ; message string with new-line char at the end (10 decimal)
-str_len: equ $ - str                    ; calcs length of string (bytes) by subtracting this' address ($ symbol) 
-                                            ; from the str's start address
-
-section .text                           ; this is the code section
-
-%funciones
-
-global _start                           ; _start is the entry point and needs global scope to be 'seen' by the 
-                                            ; linker -    equivalent to main() in C/C++
-_start:                                 ; procedure start
-        %declaraciones_start
-
-        ; contenido
-        %_start
-
-
-        mov    eax, 1                   ; specify sys_exit function code (from OS vector table)
-        mov    ebx, 0                   ; specify return code for OS (0 = everything's fine)
-        int    80h                      ; tell kernel to perform system call
-"""
-)
-
-    print_ = (
-"""
-        mov    eax, 4                   ; specify the sys_write function code (from OS vector table)
-        mov    ebx, 1                   ; specify file descriptor stdout -in linux, everything's treated as a file, 
-                                          ; even hardware devices
-        mov    ecx, %string             ; move start _address_ of string message to ecx register
-        mov    edx, %len             ; move length of message (in bytes)
-        int    80h                      ; tell kernel to perform the system call we just set up - 
-                                          ; in linux services are requested through the kernel
-"""
-)
-    funcion = (
-"""
-global %nombre
-%nombre:
-        push    ebp
-        mov     esp, ebp
-
-        ; declaraciones
-        %declaraciones
-        ; fin declaraciones
-
-        ; bloque
-        %bloque
-        ; fin bloque
-
-        pop     ebp
-        mov     ebp, esp
-        ret
-"""
-)
+    def inventar_etiqueta(self, prefijo):
+        TraductorAsm.id_etiqueta = TraductorAsm.id_etiqueta + 1
+        return ".%s_%s" % (prefijo, TraductorAsm.id_etiqueta)

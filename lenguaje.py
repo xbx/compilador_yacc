@@ -202,14 +202,14 @@ def p_sentencia_while(p):
 def p_sentencia_condicional(p):
     'sentencia_condicional : PR_IF condicion DOS_PUNTOS ABRE_BLOQUE bloque CIERRA_BLOQUE'
     # (if, condicion, bloque)
-    p[0] = Terceto(p[1], p[2], p[5], tipo="if")
+    p[0] = Terceto(p[2], p[5], tipo="if")
 
 def p_sentencia_condicional_else(p):
     """
      sentencia_condicional : PR_IF condicion DOS_PUNTOS ABRE_BLOQUE bloque CIERRA_BLOQUE PR_ELSE ABRE_BLOQUE bloque CIERRA_BLOQUE     
     """
     # (if, condicion, bloque, else, bloque)
-    p[0] = Terceto(p[1], p[2], p[5], p[7], p[9], tipo="ifelse")
+    p[0] = Terceto(p[2], p[5], p[7], p[9], tipo="ifelse")
 
 
 def p_sentencia_percent(p):
