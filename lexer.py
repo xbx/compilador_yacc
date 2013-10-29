@@ -16,6 +16,7 @@ tokens = [
    'CTE_ENT',
    'CTE_REAL',
    'CTE_STRING',
+   'TEXTO',   
    'FIN_LINEA',
    'ABRE_BLOQUE',
    'CIERRA_BLOQUE',

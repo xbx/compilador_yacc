@@ -37,6 +37,7 @@ matriz = {
         ('/', ["23", '', '', Lexer.acc_NADA]),
         ('-', ["24", '', '', Lexer.acc_NADA]),
         ('\"', ["25", '', '', Lexer.acc_NADA]),
+        ('\'', ["27", '', '', Lexer.acc_NADA]),
 
     ]),
     "1": OrderedDict([
@@ -129,5 +130,12 @@ matriz = {
     ]),
     "26": OrderedDict([
         (Val.CUALQUIER, [Val.E_FINAL, "CTE_STRING", "", Lexer.acc_CTE_STRING]),
+    ]),
+    "27": OrderedDict([
+        (Val.CUALQUIER, ["27", "", "\'", Lexer.acc_NADA]),
+        ("\'", ["28", "", "", Lexer.acc_NADA]),
+    ]),
+    "28": OrderedDict([
+        (Val.CUALQUIER, [Val.E_FINAL, "TEXTO", "", Lexer.acc_NADA]),
     ]),
 }

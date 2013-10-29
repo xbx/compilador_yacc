@@ -61,6 +61,7 @@ def verificarAsignacion(simboloIzquierda, simboloDerecha):
     if simboloIzquierda.tipo != simboloDerecha.tipo:
         raise TypeError("Error: No se puede asignar un '%s' a un '%s'." % (simboloDerecha.tipo, simboloIzquierda.tipo))
 
+
 """
     ###############################
     BNF y mapeo al codigo resultado
@@ -192,6 +193,13 @@ def p_sentencia_print(p):
     simbolo = tabla_sim.obtener_variable(p[2])
     p[0] = Terceto(simbolo, tipo="print")
 
+def p_sentencia_print_texto(p):
+    """
+    sentencia_print : PR_PRINT TEXTO   
+    """
+    p[0] = Terceto(p[2], tipo="print")
+
+
 def p_sentencia_while(p):
     """
     sentencia_while : PR_WHILE condicion DOS_PUNTOS ABRE_BLOQUE bloque CIERRA_BLOQUE
@@ -226,12 +234,13 @@ def p_asig(p):
     asig : ID OP_AS cte_string
     """
     simbolo = tabla_sim.obtener_variable(p[1])
-
-     # verificarAsignacion(simbolo, p[3])
+     #verificarAsignacion(simbolo, p[3])
 
     # (=, ID, exp)
     p[0] = Terceto(simbolo, p[3], tipo="asig")
 
+
+    
 def p_cte_string(p):
     """ cte_string : CTE_STRING """
     p[0] = tabla_sim.declarar_cte_string(p[1])
@@ -270,6 +279,17 @@ def p_expression_term(p):
     'expresion : termino'
     p[0] = p[1]
 
+def p_expression_funcion(p):
+    'expresion : llamada_funcion'
+    p[0] = p[1]
+
+def p_expression_llamada_funcion(p):
+    'llamada_funcion : ID PAREN_ABRE PAREN_CIERRA'
+    p[0] = p[1]
+
+    tabla_sim.verificar_funcion(p[1])
+
+    
 def p_term_factor(p):
     'termino : factor'
     p[0] = p[1]
@@ -310,7 +330,7 @@ yylex = Lexer()
 try:
     filename = sys.argv[1]
 except:
-    filename = "fuente.zz"
+    filename = "fuente.yy"
 fuente = open(filename).read()
 
 print '\nTokens:\n=======\n'
@@ -347,10 +367,5 @@ print '\nSimbolos:\n=========\n'
 with open('simbolos.txt', 'w') as archivo:
         print tabla_sim
         archivo.write("%s\n" % tabla_sim)
-
-
-
-
-
 
 

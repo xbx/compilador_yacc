@@ -80,6 +80,10 @@ class TablaSim():
         self.declaraciones = {}
         return simbolo
 
+    def verificar_funcion(self, nombre):
+        if not nombre in self.tabla:
+             raise TypeError("Error: Variable '%s' No es una funcion valida." % nombre)
+
     def obtener_variable(self, nombre):
         if nombre in self.declaraciones:
             return self.declaraciones[nombre]
