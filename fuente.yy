@@ -11,8 +11,6 @@ def f1: float
     print c
 return b
 
-if a==9:
-    print a
-else
-    print a
-print a
+a=f1()
+
+print 'Hola Mundo'
