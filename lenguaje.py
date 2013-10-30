@@ -249,6 +249,7 @@ def p_condicion(p):
     """
     condicion : expresion OP_IGUALDAD expresion
     condicion : expresion OP_MAYOR expresion
+    condicion : expresion OP_MAYORIGUAL expresion
     condicion : expresion OP_MENOR expresion
     condicion : expresion OP_MENORIGUAL expresion
     condicion : expresion OP_DISTINTO expresion

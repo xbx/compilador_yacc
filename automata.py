@@ -64,7 +64,11 @@ matriz = {
         (Val.CUALQUIER, ["X", "COMENTARIO", '', Lexer.acc_COMENTARIO]),
     ]),
     "6": OrderedDict([
+        ('=', ["6.1", "", '', Lexer.acc_NADA]),
         (Val.CUALQUIER, ["F", 'OP_MAYOR', '', Lexer.acc_NADA]),
+    ]),
+    "6.1": OrderedDict([
+        (Val.CUALQUIER, ["F", 'OP_MAYORIGUAL', '', Lexer.acc_NADA]),
     ]),
     "7": OrderedDict([
         ('>', ["13", "", '', Lexer.acc_NADA]),

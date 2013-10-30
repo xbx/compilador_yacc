@@ -26,28 +26,64 @@ _start:                                 ; procedure start
         int    80h                      ; tell kernel to perform system call
 """
 )
+
     if_ = (
 """
-        %condicion
-        %tipo_condicion    %etiqueta_endif
+; if
+        %condicion_simple
         %bloque
-%etiqueta_endif:
+%etiqueta_end:
+"""
+)
+    condicion_simple = (
+"""
+        %condicion
+        %tipo_condicion    %etiqueta_end
+"""
+)
+    condicion_and_or = (
+"""
+        %condicion_izq
+        %tipo_condicion_izq    %etiqueta_end
+        %condicion_der
+        %tipo_condicion_der    %etiqueta_end
+"""
+)
+
+    if_and_or = (
+"""
+; if
+%condicion_and_or
+        %bloque
+%etiqueta_end:
+"""
+)
+    while_ = (
+"""
+; while
+        jmp %etiqueta_condicion
+%etiqueta_do:
+        %bloque
+%etiqueta_condicion:
+        %condicion
+        %tipo_condicion    %etiqueta_do
 """
 )
 
     print_ = (
 """
+; print
         mov    eax, 4                   ; specify the sys_write function code (from OS vector table)
-        mov    ebx, 1                   ; specify file descriptor stdout -in linux, everything's treated as a file, 
-                                          ; even hardware devices
+        mov    ebx, 1                   ; specify file descriptor stdout -in linux 
         mov    ecx, %string             ; move start _address_ of string message to ecx register
-        mov    edx, %len             ; move length of message (in bytes)
+        mov    edx, %len                ; move length of message (in bytes)
         int    80h                      ; tell kernel to perform the system call we just set up - 
-                                          ; in linux services are requested through the kernel
 """
 )
+
     funcion = (
 """
+;funcion
 global %nombre
 %nombre:
         push    ebp

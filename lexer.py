@@ -24,6 +24,7 @@ tokens = [
    'PR_ELSE',
    'DOS_PUNTOS',
    'OP_MAYOR',
+   'OP_MAYORIGUAL',
    'OP_MENOR',
    'OP_MENORIGUAL',
    'OP_MUL',

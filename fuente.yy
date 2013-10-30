@@ -3,16 +3,14 @@ dec:
     int: x,yb,a,j
 endec
 
-j = 119
+j = 1000
 
-if j<8222:
+if j >= 0:
     print j
 
-j = 4
-if j==8:
+if j >= 122 & j < 1000:
     print j
 
-print a
 
 
-print 'Hola Mundo'
+
