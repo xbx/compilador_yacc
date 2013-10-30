@@ -3,10 +3,9 @@ dec:
     int: x,yb,a,j
 endec
 
-j = 1000
+x = 10
 
-if j >= 0:
-    print j
+j = 999
 
 if j >= 122 & j < 1000:
     print j

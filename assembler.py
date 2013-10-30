@@ -67,6 +67,17 @@ class TraductorAsm:
                 for item in terceto.items:
                     asm = asm + self.asm_terceto[item.id]
                 self.asm_terceto[terceto.id] = asm
+            elif terceto.tipo == "expresion":
+                asm = ""
+                if terceto.items[0] == '+':
+                    sumando1 = self.representar_operando(terceto.items[1])
+                    sumando2 = self.representar_operando(terceto.items[2])
+                    asm = asm + "\n;suma\n"
+                    asm = asm + "        fld    dword %s.0\n" % sumando1
+                    asm = asm + "        fld    dword %s\n" % sumando2
+                    asm = asm + "        faddp\n"
+                    asm = asm + "        fstp    eax\n"
+                self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == "sentencia":
                 asm = ""
                 for item in terceto.items:
@@ -76,7 +87,16 @@ class TraductorAsm:
                         pass
                 self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == "asig":
-                asm = "mov    DWORD [ebp-%s], %s ; asig" % (terceto.items[0].offset, terceto.items[1])
+                asm = ""
+                if isinstance(terceto.items[1], terceto.__class__):
+                    # Un terceto, ej el resultado de una suma
+                    # TODO: hardcode, por ahora todos los resultados a eax
+                    # asm = asm + self.asm_terceto[terceto.items[1].id]
+                    valor = 'eax'
+                else:
+                    # Valor literal, ej "123"
+                    valor = terceto.items[1]
+                asm = asm + "        mov    DWORD [ebp-%s], %s ; asig\n" % (terceto.items[0].offset, valor)
                 self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == "print":
                 asm = Asm.print_
