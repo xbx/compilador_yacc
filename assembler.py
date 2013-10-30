@@ -149,7 +149,7 @@ class TraductorAsm:
             try:
                 offset[simbolo.ambito] = offset[simbolo.ambito] + 4
             except KeyError:
-                offset[simbolo.ambito] = 0
+                offset[simbolo.ambito] = 4
             simbolo.offset = offset[simbolo.ambito]
         declaraciones_main = ("; declaraciones\n"
                              + "        sub    esp, %s\n" % offset['main'])
