@@ -5,6 +5,11 @@ section .data                           ; section for initialized data
 str:     db 'Hola mundo!', 0Ah         ; message string with new-line char at the end (10 decimal)
 str_len: equ $ - str                    ; calcs length of string (bytes) by subtracting this' address ($ symbol) 
                                             ; from the str's start address
+%cte_numericas
+%cte_string
+
+section .bss
+aux1: resd 1     ;reserve 1 double word for result
 
 section .text                           ; this is the code section
 
@@ -17,13 +22,14 @@ _start:                                 ; procedure start
         mov     ebp, esp
         %declaraciones_start
 
-        ; contenido
-        %_start
+; contenido main
+%_start
 
-
+        ; return
         mov    eax, 1                   ; specify sys_exit function code (from OS vector table)
         mov    ebx, 0                   ; specify return code for OS (0 = everything's fine)
         int    80h                      ; tell kernel to perform system call
+; fin contenido main
 """
 )
 

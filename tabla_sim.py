@@ -7,6 +7,7 @@ class Val():
     S_TIPO_FLOAT = 'float'
     S_TIPO_FUNCION = 'funcion'
     S_TIPO_CTE_STRING = 'cte_string'
+    S_TIPO_CTE_NUMERICA = 'cte_numerica'
 
 class Simbolo():
     def __init__(self):
@@ -56,8 +57,20 @@ class TablaSim():
         self.ultimo_id = self.ultimo_id + 1
         simbolo.nombre = '_CTE_STRING_' + str(simbolo.id)
         simbolo.tipo = Val.S_TIPO_CTE_STRING
-        simbolo.ambito = self.ambito_actual or "main"
+        simbolo.ambito = "global"
         simbolo.valor = string
+
+        self.insertar_en_tabla(simbolo)
+        return simbolo
+
+    def declarar_cte_numerica(self, valor):
+        simbolo = Simbolo()
+        simbolo.id = self.ultimo_id
+        self.ultimo_id = self.ultimo_id + 1
+        simbolo.nombre = '_' + str(valor)
+        simbolo.tipo = Val.S_TIPO_CTE_NUMERICA
+        simbolo.ambito = "global"
+        simbolo.valor = valor
 
         self.insertar_en_tabla(simbolo)
         return simbolo
@@ -82,7 +95,7 @@ class TablaSim():
 
     def verificar_funcion(self, nombre):
         if not nombre in self.tabla:
-             raise TypeError("Error: Variable '%s' No es una funcion valida." % nombre)
+            raise TypeError("Error: Variable '%s' No es una funcion valida." % nombre)
 
     def obtener_variable(self, nombre):
         if nombre in self.declaraciones:

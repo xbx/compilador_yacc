@@ -1,15 +1,12 @@
 ## test
 dec:
-    int: x,yb,a,j
+    int: x,a,j
+    string: s
 endec
 
-x = 10
+s = "si  "
 
-j = 999
+j = 10
 
-if j >= 122 & j < 1000:
-    print j
-
-
-
-
+if j > 1:
+    print s
