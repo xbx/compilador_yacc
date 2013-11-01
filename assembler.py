@@ -31,7 +31,9 @@ class TraductorAsm:
                 if terceto.items[0] in ["<", "<=", ">", ">=", '==']:
                     izq = self.representar_operando(terceto.items[1])
                     der = self.representar_operando(terceto.items[2])
-                    asm = "cmp %s, %s" % (izq, der)
+                    asm = "movl    %s, %%eax\n" % der
+                    asm += "        movl    %s, %%edx\n" % izq
+                    asm += "        cmpl    %eax, %edx"
                 self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == "while":
                 pass
@@ -69,9 +71,9 @@ class TraductorAsm:
                 self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == "expresion":
                 asm = ""
-                operando1 = self.representar_operando_indirecto(terceto.items[1])
-                operando2 = self.representar_operando_indirecto(terceto.items[2])
-                asm = asm + "\n;suma\n"
+                operando1 = self.representar_operando(terceto.items[1])
+                operando2 = self.representar_operando(terceto.items[2])
+                asm = asm + "\n# suma\n"
                 asm = asm + "        fld    %s\n" % operando1
                 asm = asm + "        fld    %s\n" % operando2
                 if terceto.items[0] == '+':
@@ -101,9 +103,9 @@ class TraductorAsm:
                     valor = terceto.items[1]
                     if isinstance(valor, Simbolo):
                         # Nombre de la constante
-                        valor = valor.nombre
-
-                asm = asm + "        mov    DWORD [ebp-%s], %s ; asig\n" % (terceto.items[0].offset, valor)
+                        valor = self.representar_operando(valor)
+                asm += "        movl    %s, %%eax\n" % valor
+                asm = asm + "        movl    %%eax, %s(%%ebp) # asig\n" % terceto.items[0].offset
                 self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == "print":
                 asm = Asm.print_
@@ -156,11 +158,11 @@ class TraductorAsm:
         asm_condicion = asm_condicion.replace('%tipo_condicion_der', asm_tipo_der)
         return asm_condicion
     def obtener_jump(self, tipo_condicion):
-        if tipo_condicion == '==':  # ok
+        if tipo_condicion == '==':
             asm_tipo = 'jne'
-        elif tipo_condicion == '<':  # no
+        elif tipo_condicion == '<':
             asm_tipo = 'jge'
-        elif tipo_condicion == '<=':  # no el menor
+        elif tipo_condicion == '<=':
             asm_tipo = 'jg'
         elif tipo_condicion == '>':
             asm_tipo = 'jle'
@@ -170,8 +172,8 @@ class TraductorAsm:
 
     def declaraciones_main(self):
         offset = {}
-        asm_cte_numericas = "; constantes numericas\n"
-        asm_cte_string = "; constantes string\n"
+        asm_cte_numericas = "# constantes numericas\n"
+        asm_cte_string = "# constantes string\n"
         for simbolo in self.tabla_sim:
             if simbolo.ambito == 'global':
                 # Constantes (globales)
@@ -182,9 +184,13 @@ class TraductorAsm:
                         # Forzamos a que sean siempre reales
                         valor = "%s.0" % simbolo.valor
                         # valor = simbolo.valor
-                    asm_cte_numericas = asm_cte_numericas + ("%s: dd %s\n" % (simbolo.nombre, valor))
+                    asm_temp = Asm.cte_numerica.replace("%nombre", simbolo.nombre)
+                    asm_temp = asm_temp.replace("%valor", simbolo.valor)
+                    asm_cte_string += asm_temp
                 elif simbolo.tipo == "cte_string":
-                    asm_cte_string = asm_cte_string + ("%s: db '%s', 0Ah\n" % (simbolo.nombre, simbolo.valor))
+                    asm_temp = Asm.cte_string.replace("%nombre", simbolo.nombre)
+                    asm_temp = asm_temp.replace("%valor", simbolo.valor)
+                    asm_cte_string += asm_temp
             else:
                 # Variables para el stack (Se calcula offset)
                 try:
@@ -193,8 +199,8 @@ class TraductorAsm:
                     offset[simbolo.ambito] = 4
                 simbolo.offset = offset[simbolo.ambito]
 
-        declaraciones_main = ("; declaraciones\n"
-                             + "        sub    esp, %s\n" % offset['main'])
+        declaraciones_main = ("# declaraciones\n"
+                             + "        subl    $%s, %%esp\n" % offset['main'])
         self.asm = self.asm.replace("%declaraciones_main", declaraciones_main)
         self.asm = self.asm.replace("%cte_numericas", asm_cte_numericas)
         self.asm = self.asm.replace("%cte_string", asm_cte_string)
@@ -204,22 +210,25 @@ class TraductorAsm:
         for simbolo in self.tabla_sim:
             if simbolo.ambito == simbolo_funcion.nombre and simbolo.offset > offset:
                 offset = simbolo.offset
-        declaraciones = "mov    esp, %s\n" % offset
+        declaraciones = "movl     %s, %%esp\n" % offset
         return declaraciones
 
     def representar_operando(self, operando):
         if isinstance(operando, Simbolo):
             if operando.offset is not None:
-                return "   DWORD [ebp-%s]" % operando.offset
+                return "   %s(%%ebp)" % operando.offset
             else:
-                return operando.nombre
+                if operando.tipo == 'cte_numerica':
+                    return "$%s" % operando.valor
+                else:
+                    return operando.nombre
         elif isinstance(operando, str):
             return operando
 
     def representar_operando_indirecto(self, operando):
         if isinstance(operando, Simbolo):
             if operando.offset is not None:
-                return "   DWORD [ebp-%s]" % operando.offset
+                return "   %s(%%ebp)" % operando.offset
             else:
                 return "DWORD [%s]" % operando.nombre
         elif isinstance(operando, str):

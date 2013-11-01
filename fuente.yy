@@ -1,12 +1,20 @@
 ## test
 dec:
-    int: x,a,j
-    string: s
+    int: edad
+    string: nino, adol, adul
 endec
 
-s = "si  "
+nino = "nino"
+adol = "adol"
+adul = "adul"
 
-j = 10
+edad = 22
 
-if j > 1:
-    print s
+if edad >= 0 & edad < 12:
+    print nino
+
+if edad >= 12 & edad < 20:
+    print adol
+
+if edad >= 20:
+    print adul

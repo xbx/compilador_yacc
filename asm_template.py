@@ -1,6 +1,7 @@
 class Asm:
     base = (
 """
+# -----------------------------------------------
     .file    "test.c"
     .text
 
@@ -18,22 +19,24 @@ class Asm:
     .globl  main
     .type   main, @function
 main:
+        pushl    %ebp
+        movl     %esp, %ebp
         %declaraciones_main
 
-; contenido main
+# contenido main
 %main
 
-        ; return
+        # return
         movl    $0, %ebx
         movl    $1, %eax
         int     $0x80
-; fin contenido main
+# fin contenido main
 """
 )
 
     if_ = (
 """
-; if
+# if
         %condicion_simple
         %bloque
 %etiqueta_end:
@@ -56,7 +59,7 @@ main:
 
     if_and_or = (
 """
-; if
+# if
 %condicion_and_or
         %bloque
 %etiqueta_end:
@@ -64,7 +67,7 @@ main:
 )
     while_ = (
 """
-; while
+# while
         jmp %etiqueta_condicion
 %etiqueta_do:
         %bloque
@@ -76,9 +79,9 @@ main:
 
     print_ = (
 """
-; print
+# print
         movl    $%len, %edx
-        movl    $%string, %ecx
+        movl    %string, %ecx
         movl    $1, %ebx
         movl    $4, %eax
         int     $0x80
@@ -87,23 +90,50 @@ main:
 
     funcion = (
 """
-;funcion
+# funcion
 .globl %nombre
 .type   %nombre, @function
 %nombre:
         push    ebp
         mov     esp, ebp
 
-        ; declaraciones
+        # declaraciones
         %declaraciones
-        ; fin declaraciones
+        # fin declaraciones
 
-        ; bloque
+        # bloque
         %bloque
-        ; fin bloque
+        # fin bloque
 
         pop     ebp
         mov     ebp, esp
         ret
 """
 )
+
+    cte_string = (
+"""
+.%nombre:
+    .string "%valor"
+    .data
+    .align 4
+    .type   %nombre, @object
+    .size   %nombre, 4
+%nombre:
+    .long   .%nombre
+"""
+)
+
+    cte_numerica = (
+"""
+.%nombre:
+    .float %valor
+    .data
+    .align 4
+    .type   %nombre, @object
+    .size   %nombre, 4
+%nombre:
+    .long   .%nombre
+"""
+)
+
