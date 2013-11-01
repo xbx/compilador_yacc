@@ -349,7 +349,7 @@ with open('intermedia.txt', 'w') as archivo:
         archivo.write("%s\n" % repr(terceto))
 
 # Pasaje a assembler
-SALIDA_ASM = "programa.asm"
+SALIDA_ASM = "programa.s"
 SALIDA_ELF = "programa"
 
 from assembler import TraductorAsm

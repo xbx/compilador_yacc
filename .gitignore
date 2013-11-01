@@ -43,3 +43,4 @@ simbolos.txt
 *.o
 programa
 asm/
+*.s

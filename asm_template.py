@@ -1,34 +1,32 @@
 class Asm:
     base = (
 """
-section .data                           ; section for initialized data
-str:     db 'Hola mundo!', 0Ah         ; message string with new-line char at the end (10 decimal)
-str_len: equ $ - str                    ; calcs length of string (bytes) by subtracting this' address ($ symbol) 
-                                            ; from the str's start address
-%cte_numericas
-%cte_string
-
-section .bss
-aux1: resd 1     ;reserve 1 double word for result
-
-section .text                           ; this is the code section
+    .file    "test.c"
+    .text
 
 %funciones
 
-global _start                           ; _start is the entry point and needs global scope to be 'seen' by the 
-                                            ; linker -    equivalent to main() in C/C++
-_start:                                 ; procedure start
-        push    ebp
-        mov     ebp, esp
-        %declaraciones_start
+    .section    .rodata.str1.1,"aMS",@progbits,1
+
+.LC0:
+    .string "la gran cadena"
+
+%cte_numericas
+%cte_string
+
+    .section    .text.startup,"ax",@progbits
+    .globl  main
+    .type   main, @function
+main:
+        %declaraciones_main
 
 ; contenido main
-%_start
+%main
 
         ; return
-        mov    eax, 1                   ; specify sys_exit function code (from OS vector table)
-        mov    ebx, 0                   ; specify return code for OS (0 = everything's fine)
-        int    80h                      ; tell kernel to perform system call
+        movl    $0, %ebx
+        movl    $1, %eax
+        int     $0x80
 ; fin contenido main
 """
 )
@@ -79,18 +77,19 @@ _start:                                 ; procedure start
     print_ = (
 """
 ; print
-        mov    eax, 4                   ; specify the sys_write function code (from OS vector table)
-        mov    ebx, 1                   ; specify file descriptor stdout -in linux 
-        mov    ecx, %string             ; move start _address_ of string message to ecx register
-        mov    edx, %len                ; move length of message (in bytes)
-        int    80h                      ; tell kernel to perform the system call we just set up - 
+        movl    $%len, %edx
+        movl    $%string, %ecx
+        movl    $1, %ebx
+        movl    $4, %eax
+        int     $0x80
 """
 )
 
     funcion = (
 """
 ;funcion
-global %nombre
+.globl %nombre
+.type   %nombre, @function
 %nombre:
         push    ebp
         mov     esp, ebp

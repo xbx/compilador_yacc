@@ -25,7 +25,7 @@ class TraductorAsm:
                 # Print hola mundo
                 # asm = asm + "\n" + Asm.print_.replace("%string", "str")
                 # asm = asm.replace("%len", "str_len")
-                self.asm = self.asm.replace('%_start', asm)
+                self.asm = self.asm.replace('%main', asm)
             elif terceto.tipo == "condicion":
                 asm = ""
                 if terceto.items[0] in ["<", "<=", ">", ">=", '==']:
@@ -141,8 +141,7 @@ class TraductorAsm:
             out.write(self.asm)
 
     def compilar(self, asm, ejecutable):
-        system("/bin/nasm -f elf -F stabs -o programa.o %s" % asm)
-        system("ld -m elf_i386 -o %s programa.o" % ejecutable)
+        system("/bin/gcc -o %s %s" % (ejecutable, asm))
 
     def ejecutar(self, ejecutable):
         system("./%s" % ejecutable)
@@ -196,7 +195,7 @@ class TraductorAsm:
 
         declaraciones_main = ("; declaraciones\n"
                              + "        sub    esp, %s\n" % offset['main'])
-        self.asm = self.asm.replace("%declaraciones_start", declaraciones_main)
+        self.asm = self.asm.replace("%declaraciones_main", declaraciones_main)
         self.asm = self.asm.replace("%cte_numericas", asm_cte_numericas)
         self.asm = self.asm.replace("%cte_string", asm_cte_string)
 
