@@ -9,9 +9,6 @@ class Asm:
 
     .section    .rodata.str1.1,"aMS",@progbits,1
 
-.LC0:
-    .string "la gran cadena"
-
 %cte_numericas
 %cte_string
 
@@ -25,7 +22,6 @@ main:
 
 # contenido main
 %main
-
         # return
         movl    $0, %ebx
         movl    $1, %eax
@@ -94,31 +90,22 @@ main:
 .globl %nombre
 .type   %nombre, @function
 %nombre:
-        push    ebp
-        mov     esp, ebp
-
-        # declaraciones
-        %declaraciones
-        # fin declaraciones
-
-        # bloque
-        %bloque
-        # fin bloque
-
-        pop     ebp
-        mov     ebp, esp
+        subl     $%offset_declaraciones, %esp
+%bloque
+        addl     $%offset_declaraciones, %esp
         ret
+
+
 """
 )
 
     cte_string = (
 """
 .%nombre:
-    .string "%valor"
-    .data
+    .ascii "%valor\\n"
     .align 4
     .type   %nombre, @object
-    .size   %nombre, 4
+    .size   %nombre, 5
 %nombre:
     .long   .%nombre
 """
@@ -128,7 +115,6 @@ main:
 """
 .%nombre:
     .float %valor
-    .data
     .align 4
     .type   %nombre, @object
     .size   %nombre, 4

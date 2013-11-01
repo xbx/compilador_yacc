@@ -4,11 +4,19 @@ dec:
     string: nino, adol, adul
 endec
 
+def funcion1: int
+    dec:
+        int: a
+        string: s
+    endec
+    a = 28
+return a
+
 nino = "nino"
 adol = "adol"
 adul = "adul"
 
-edad = 22
+edad = funcion1()
 
 if edad >= 0 & edad < 12:
     print nino

@@ -26,6 +26,11 @@ class TraductorAsm:
                 # asm = asm + "\n" + Asm.print_.replace("%string", "str")
                 # asm = asm.replace("%len", "str_len")
                 self.asm = self.asm.replace('%main', asm)
+            elif terceto.tipo == "main":
+                self.asm_terceto[terceto.id] = ""
+                for item in [item for item in terceto.items if item.tipo == 'bloque']:
+                    # Salteo las funciones porque no son parte de la rutina main
+                    self.asm_terceto[terceto.id] += self.asm_terceto[item.id]
             elif terceto.tipo == "condicion":
                 asm = ""
                 if terceto.items[0] in ["<", "<=", ">", ">=", '==']:
@@ -80,7 +85,7 @@ class TraductorAsm:
                     asm = asm + "        fadd\n"
                 elif terceto.items[0] == '-':
                     asm = asm + "        fsub\n"
-                asm = asm + "        fst    eax\n"
+                asm = asm + "        fst    %eax\n"
                 asm = asm + "        ffree\n"
                 self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == "sentencia":
@@ -97,7 +102,7 @@ class TraductorAsm:
                     # Un terceto, ej el resultado de una suma
                     # TODO: hardcode, por ahora todos los resultados a eax
                     asm = asm + self.asm_terceto[terceto.items[1].id]
-                    valor = 'eax'
+                    valor = '%eax'
                 else:
                     # Valor literal, ej "123"
                     valor = terceto.items[1]
@@ -111,15 +116,15 @@ class TraductorAsm:
                 asm = Asm.print_
                 simbolo = terceto.items[0]
                 asm = asm.replace('%string', self.representar_operando(simbolo))  # TODO: hardcode string
-                asm = asm.replace('%len', '4')  # TODO: hardcode len
+                asm = asm.replace('%len', '5')  # TODO: hardcode len
                 self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == 'funcion':
                 simbolo = terceto.items[0]
 
                 asm = Asm.funcion
-                declaraciones = self.declaraciones_funcion(simbolo_funcion=simbolo)
+                offset_declaraciones = self.declaraciones_funcion(simbolo_funcion=simbolo)
 
-                asm = asm.replace('%declaraciones', declaraciones)
+                asm = asm.replace('%offset_declaraciones', offset_declaraciones)
                 asm = asm.replace('%nombre', simbolo.nombre)
 
                 # cuerpo de la funcion
@@ -132,8 +137,14 @@ class TraductorAsm:
                 except KeyError:
                     asm = asm.replace('%bloque', '')
 
+                a_retornar = self.representar_operando(terceto.items[3])
+                asm_return = "    movl    %s, %%eax" % a_retornar
+                asm = asm.replace('%return', asm_return)
+
                 self.asm_terceto[terceto.id] = asm
                 self.asm = self.asm.replace('%funciones', asm)
+            elif terceto.tipo == 'call':
+                self.asm_terceto[terceto.id] = "andl    $-16, %%esp\n        call     %s\n" % terceto.items[0]
 
 
         # Limpiamos las marcas sin usar que pudieron haber quedado
@@ -210,8 +221,7 @@ class TraductorAsm:
         for simbolo in self.tabla_sim:
             if simbolo.ambito == simbolo_funcion.nombre and simbolo.offset > offset:
                 offset = simbolo.offset
-        declaraciones = "movl     %s, %%esp\n" % offset
-        return declaraciones
+        return str(offset)
 
     def representar_operando(self, operando):
         if isinstance(operando, Simbolo):

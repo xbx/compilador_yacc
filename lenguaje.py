@@ -286,9 +286,9 @@ def p_expression_funcion(p):
 
 def p_expression_llamada_funcion(p):
     'llamada_funcion : ID PAREN_ABRE PAREN_CIERRA'
-    p[0] = p[1]
 
     tabla_sim.verificar_funcion(p[1])
+    p[0] = Terceto(p[1], tipo='call')
 
 def p_term_factor(p):
     'termino : factor'
