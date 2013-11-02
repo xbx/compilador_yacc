@@ -359,9 +359,6 @@ print "\nSalida assembler: %s" % SALIDA_ASM
 
 if raw_input("\nCompilar asm? [Y|n] ") in ("", "Y"):
     traductor.compilar(asm=SALIDA_ASM, ejecutable=SALIDA_ELF)
-    if raw_input("\nEjecutar %s? [Y|n] " % SALIDA_ELF) in ("", "Y"):
-        print "\n"
-        traductor.ejecutar(SALIDA_ELF)
 
 # Guardamos la tabla de simbolos a un archivo
 print '\nSimbolos:\n=========\n'
@@ -369,4 +366,7 @@ with open('simbolos.txt', 'w') as archivo:
         print tabla_sim
         archivo.write("%s\n" % tabla_sim)
 
+if raw_input("\nEjecutar %s? [Y|n] " % SALIDA_ELF) in ("", "Y"):
+    print "\n"
+    traductor.ejecutar(SALIDA_ELF)
 

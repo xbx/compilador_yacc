@@ -9,7 +9,7 @@ def funcion1: int
         int: a
         string: s
     endec
-    a = 28
+    a = 8
 return a
 
 nino = "nino"

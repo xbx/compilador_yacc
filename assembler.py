@@ -110,7 +110,7 @@ class TraductorAsm:
                         # Nombre de la constante
                         valor = self.representar_operando(valor)
                 asm += "        movl    %s, %%eax\n" % valor
-                asm = asm + "        movl    %%eax, %s(%%ebp) # asig\n" % terceto.items[0].offset
+                asm = asm + "        movl    %%eax, -%s(%%ebp) # asig\n" % terceto.items[0].offset
                 self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == "print":
                 asm = Asm.print_
@@ -154,7 +154,7 @@ class TraductorAsm:
             out.write(self.asm)
 
     def compilar(self, asm, ejecutable):
-        system("/bin/gcc -o %s %s" % (ejecutable, asm))
+        system("/bin/gcc -m32 -o %s %s" % (ejecutable, asm))
 
     def ejecutar(self, ejecutable):
         system("./%s" % ejecutable)
@@ -226,7 +226,7 @@ class TraductorAsm:
     def representar_operando(self, operando):
         if isinstance(operando, Simbolo):
             if operando.offset is not None:
-                return "   %s(%%ebp)" % operando.offset
+                return "   -%s(%%ebp)" % operando.offset
             else:
                 if operando.tipo == 'cte_numerica':
                     return "$%s" % operando.valor

@@ -22,7 +22,7 @@ main:
 
 # contenido main
 %main
-        # return
+        # exit main
         movl    $0, %ebx
         movl    $1, %eax
         int     $0x80
@@ -90,9 +90,13 @@ main:
 .globl %nombre
 .type   %nombre, @function
 %nombre:
-        subl     $%offset_declaraciones, %esp
+        pushl   %ebp
+        movl    %esp, %ebp
+        
+        subl    $%offset_declaraciones, %esp
 %bloque
-        addl     $%offset_declaraciones, %esp
+        leave
+        # addl    $%offset_declaraciones, %esp
         ret
 
 
