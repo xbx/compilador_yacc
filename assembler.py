@@ -76,17 +76,24 @@ class TraductorAsm:
                 self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == "expresion":
                 asm = ""
-                operando1 = self.representar_operando(terceto.items[1])
-                operando2 = self.representar_operando(terceto.items[2])
+
+                operando1 = self.representar_operando_copro(terceto.items[1])
+                if isinstance(terceto.items[1], terceto.__class__):
+                    asm += self.asm_terceto[terceto.items[1].id]
+
+                operando2 = self.representar_operando_copro(terceto.items[2])
+                if isinstance(terceto.items[2], terceto.__class__):
+                    asm += self.asm_terceto[terceto.items[2].id]
                 asm = asm + "\n# suma\n"
-                asm = asm + "        fld    %s\n" % operando1
-                asm = asm + "        fld    %s\n" % operando2
+                asm = asm + "        flds   %s\n" % operando2
+                asm = asm + "        flds   %s\n" % operando1
                 if terceto.items[0] == '+':
-                    asm = asm + "        fadd\n"
+                    asm = asm + "        faddp %st, %st(1)\n"
                 elif terceto.items[0] == '-':
-                    asm = asm + "        fsub\n"
-                asm = asm + "        fst    %eax\n"
-                asm = asm + "        ffree\n"
+                    asm = asm + "        fsub %st, %st(1)\n"
+                    asm = asm + "        fxch\n"
+                asm = asm + "        fstps    -4(%ebp)\n"
+                terceto.variable_aux = '-4(%ebp)'
                 self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == "sentencia":
                 asm = ""
@@ -102,7 +109,7 @@ class TraductorAsm:
                     # Un terceto, ej el resultado de una suma
                     # TODO: hardcode, por ahora todos los resultados a eax
                     asm = asm + self.asm_terceto[terceto.items[1].id]
-                    valor = '%eax'
+                    valor = terceto.items[1].variable_aux
                 else:
                     # Valor literal, ej "123"
                     valor = terceto.items[1]
@@ -116,7 +123,7 @@ class TraductorAsm:
                 asm = Asm.print_
                 simbolo = terceto.items[0]
                 asm = asm.replace('%string', self.representar_operando(simbolo))  # TODO: hardcode string
-                asm = asm.replace('%len', '5')  # TODO: hardcode len
+                asm = asm.replace('%len', '6')  # TODO: hardcode len
                 self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == 'funcion':
                 simbolo = terceto.items[0]
@@ -144,7 +151,7 @@ class TraductorAsm:
                 self.asm_terceto[terceto.id] = asm
                 self.asm = self.asm.replace('%funciones', asm)
             elif terceto.tipo == 'call':
-                self.asm_terceto[terceto.id] = "andl    $-16, %%esp\n        call     %s\n" % terceto.items[0]
+                self.asm_terceto[terceto.id] = "        andl    $-16, %%esp\n        call     %s\n" % terceto.items[0]
 
 
         # Limpiamos las marcas sin usar que pudieron haber quedado
@@ -183,8 +190,8 @@ class TraductorAsm:
 
     def declaraciones_main(self):
         offset = {}
-        asm_cte_numericas = "# constantes numericas\n"
-        asm_cte_string = "# constantes string\n"
+        asm_cte_numericas = ""
+        asm_cte_string = ""
         for simbolo in self.tabla_sim:
             if simbolo.ambito == 'global':
                 # Constantes (globales)
@@ -207,7 +214,7 @@ class TraductorAsm:
                 try:
                     offset[simbolo.ambito] = offset[simbolo.ambito] + 4
                 except KeyError:
-                    offset[simbolo.ambito] = 4
+                    offset[simbolo.ambito] = 8
                 simbolo.offset = offset[simbolo.ambito]
 
         declaraciones_main = ("# declaraciones\n"
@@ -229,20 +236,22 @@ class TraductorAsm:
                 return "   -%s(%%ebp)" % operando.offset
             else:
                 if operando.tipo == 'cte_numerica':
-                    return "$%s" % operando.valor
+                    return "%s" % operando.nombre
                 else:
                     return operando.nombre
         elif isinstance(operando, str):
             return operando
 
-    def representar_operando_indirecto(self, operando):
+    def representar_operando_copro(self, operando):
         if isinstance(operando, Simbolo):
             if operando.offset is not None:
-                return "   %s(%%ebp)" % operando.offset
+                return "   -%s(%%ebp)" % operando.offset
             else:
-                return "DWORD [%s]" % operando.nombre
+                return "%s" % operando.nombre
         elif isinstance(operando, str):
             return operando
+        elif hasattr(operando, 'variable_aux'):
+            return operando.variable_aux
 
     def limpiar_marcas(self):
         self.asm = self.asm.replace('%funciones', '')

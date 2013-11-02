@@ -2,16 +2,15 @@ class Asm:
     base = (
 """
 # -----------------------------------------------
-    .file    "test.c"
     .text
 
+# FUNCIONES -------------------------------------
 %funciones
 
     .section    .rodata.str1.1,"aMS",@progbits,1
 
-%cte_numericas
-%cte_string
 
+# Main -----------------------------------------
     .section    .text.startup,"ax",@progbits
     .globl  main
     .type   main, @function
@@ -23,10 +22,19 @@ main:
 # contenido main
 %main
         # exit main
-        movl    $0, %ebx
-        movl    $1, %eax
-        int     $0x80
-# fin contenido main
+        movl $44, %eax
+        leave
+        ret
+        .size   main, .-main
+        .section    .rodata
+        .align 4
+# Constantes ------------------------------------
+.LC0:
+    .float
+    .align 4
+
+%cte_numericas
+%cte_string
 """
 )
 
@@ -86,20 +94,19 @@ main:
 
     funcion = (
 """
-# funcion
+# funcion %nombre ------------------------------
 .globl %nombre
 .type   %nombre, @function
 %nombre:
         pushl   %ebp
         movl    %esp, %ebp
-        
+
         subl    $%offset_declaraciones, %esp
 %bloque
         leave
         # addl    $%offset_declaraciones, %esp
         ret
-
-
+%funciones
 """
 )
 
@@ -109,7 +116,7 @@ main:
     .ascii "%valor\\n"
     .align 4
     .type   %nombre, @object
-    .size   %nombre, 5
+    .size   %nombre, 6
 %nombre:
     .long   .%nombre
 """
@@ -117,13 +124,9 @@ main:
 
     cte_numerica = (
 """
-.%nombre:
+%nombre:
     .float %valor
     .align 4
-    .type   %nombre, @object
-    .size   %nombre, 4
-%nombre:
-    .long   .%nombre
 """
 )
 

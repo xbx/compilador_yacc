@@ -1,60 +1,47 @@
-## UNLAM 2013
-## LYC - Bravo, Giorgi, Francisichini
-
+## test
 dec:
-    int: a
-    float: b
-    int: s
-    string: str
-    int: foo
-    string: baz
-    int: bar
-    int: u
-    int: x
-    int: c
-    float: d
+    int: edad, limite
+    string: nino, adol, adul, bebe, muy
 endec
 
-## funcion
-def funcion1: float
+def funcion2: int
     dec:
-        int: a
+        string: s
     endec
-    a = 3
-return a
+    s = "hla!"
+return s
 
-def funcion2: float
+def funcion1: int
     dec:
-        int: bdefun2
+        int: edadretornar
+        string: s, mensaje
     endec
-    print bdefun2
-return a
+    ## Llamada anidada
+    mensaje = funcion2()
+    print mensaje
+    edadretornar = 100
+return edadretornar
 
-## constante string
-str = "test de una cadena"
+nino = "ninio"
+bebe = " y bb"
+adol = "adol "
+adul = "adul "
+muy = "muy "
 
-## Asignacion
-bar = baz + foo
+edad = funcion1()
 
-## Condicional / anidamiento
-if a > b & b < u:
-    b = 2 + 3
-    if a < b:
-        a = b + x
-    a = s + 8
+if edad >= 0 & edad < 12:
+    print nino
+    if edad < 2:
+        print bebe
 
-## Suma
-a = 2 + 2
+if edad >= 12 & edad < 20:
+    print adol
 
+limite = 50 + 30
 
-## Print
-a = 2 * b - 3
-print a
+if edad >= 20:
+    if edad > limite:
+        print muy
+    print adul
 
-## Asociativiadad
-a = 2 * (b - 3)
-c = 2 / b
-
-if a > b & b < u:
-    while a > b:
-        c = d

@@ -1,28 +1,19 @@
 ## test
 dec:
-    int: edad
-    string: nino, adol, adul
+    int: numero, sumando
+    string: ok, fin
 endec
 
-def funcion1: int
-    dec:
-        int: a
-        string: s
-    endec
-    a = 8
-return a
+ok = "--:  "
+print ok
 
-nino = "nino"
-adol = "adol"
-adul = "adul"
+fin = "Si  "
 
-edad = funcion1()
+sumando = 1
+numero = ((30 - sumando) + 1) - sumando
 
-if edad >= 0 & edad < 12:
-    print nino
+if numero == 29:
+    print fin
 
-if edad >= 12 & edad < 20:
-    print adol
+ok = "--   "
 
-if edad >= 20:
-    print adul
