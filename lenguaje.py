@@ -14,6 +14,11 @@ from lexer import Lexer, tokens
 from tabla_sim import TablaSim, Simbolo
 import sys
 
+precedence = (
+    ('left', 'OP_SUMA', 'OP_RESTA'),
+    ('left', 'OP_MUL', 'OP_DIV'),
+)
+
 def concatena(lista):
     """
     Test. Por ahora concatena los operandos como string en vez

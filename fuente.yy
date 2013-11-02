@@ -9,10 +9,11 @@ print ok
 
 fin = "Si  "
 
-sumando = 1
-numero = ((30 - sumando) + 1) - sumando
+sumando = 2
 
-if numero == 29:
+numero = (2+2)*2
+
+if numero == 8:
     print fin
 
 ok = "--   "

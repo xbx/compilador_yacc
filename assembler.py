@@ -84,14 +84,18 @@ class TraductorAsm:
                 operando2 = self.representar_operando_copro(terceto.items[2])
                 if isinstance(terceto.items[2], terceto.__class__):
                     asm += self.asm_terceto[terceto.items[2].id]
-                asm = asm + "\n# suma\n"
+                asm = asm + "\n# aritmetica\n"
                 asm = asm + "        flds   %s\n" % operando2
                 asm = asm + "        flds   %s\n" % operando1
                 if terceto.items[0] == '+':
-                    asm = asm + "        faddp %st, %st(1)\n"
+                    asm = asm + "        faddp    %st, %st(1)\n"
                 elif terceto.items[0] == '-':
-                    asm = asm + "        fsub %st, %st(1)\n"
+                    asm = asm + "        fsub    %st, %st(1)\n"
                     asm = asm + "        fxch\n"
+                if terceto.items[0] == '*':
+                    asm = asm + "        fmulp    %st, %st(1)\n"
+                if terceto.items[0] == '/':
+                    asm = asm + "        fdivp    %st, %st(1)\n"
                 asm = asm + "        fstps    -4(%ebp)\n"
                 terceto.variable_aux = '-4(%ebp)'
                 self.asm_terceto[terceto.id] = asm
