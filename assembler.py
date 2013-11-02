@@ -75,7 +75,7 @@ class TraductorAsm:
                     asm = asm + self.asm_terceto[item.id]
                 self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == "expresion":
-                asm = ""
+                asm = "\n# aritmetica\n"
 
                 operando1 = self.representar_operando_copro(terceto.items[1])
                 if isinstance(terceto.items[1], terceto.__class__):
@@ -84,9 +84,19 @@ class TraductorAsm:
                 operando2 = self.representar_operando_copro(terceto.items[2])
                 if isinstance(terceto.items[2], terceto.__class__):
                     asm += self.asm_terceto[terceto.items[2].id]
-                asm = asm + "\n# aritmetica\n"
+
+                # Operando 2 a copro
+                if operando2 == '%eax':
+                    asm = asm + "        movl   %s, -4(%%ebp)\n" % operando2
+                    operando2 = '-4(%ebp)'
                 asm = asm + "        flds   %s\n" % operando2
+
+                # Operando 1 a copro
+                if operando1 == '%eax':
+                    asm = asm + "        movl   %s, -4(%%ebp)\n" % operando1
+                    operando1 = '-4(%ebp)'
                 asm = asm + "        flds   %s\n" % operando1
+
                 if terceto.items[0] == '+':
                     asm = asm + "        faddp    %st, %st(1)\n"
                 elif terceto.items[0] == '-':
@@ -149,12 +159,14 @@ class TraductorAsm:
                     asm = asm.replace('%bloque', '')
 
                 a_retornar = self.representar_operando(terceto.items[3])
-                asm_return = "    movl    %s, %%eax" % a_retornar
+                terceto.variable_aux = '%eax'
+                asm_return = "    movl    %s, %s" % (a_retornar, terceto.variable_aux)
                 asm = asm.replace('%return', asm_return)
 
                 self.asm_terceto[terceto.id] = asm
                 self.asm = self.asm.replace('%funciones', asm)
             elif terceto.tipo == 'call':
+                terceto.variable_aux = '%eax'
                 self.asm_terceto[terceto.id] = "        andl    $-16, %%esp\n        call     %s\n" % terceto.items[0]
 
 
