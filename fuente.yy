@@ -16,16 +16,28 @@ return aux
 ok = "--:  "
 print ok
 
-llegando = "llegan"
+sumando = 3
+llegando = " -   "
 fin = "Si  "
 
-numero = 2 * (funcion1() + 10)
+numero = funcion1() + 1
 
-while numero < 50:
+while numero < 15:
     numero = numero + 1
-    if numero > 47:
+    sumando = numero
+    while sumando < 15:
+        sumando = sumando + 1
         print llegando
     print fin
 
-ok = "--   "
+ok = "**F**"
+
+numero = 100
+
+print ok
+
+sumando = percent 10, 50
+
+if sumando == 5:
+    print fin
 

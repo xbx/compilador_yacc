@@ -181,7 +181,6 @@ def p_sentencia(p):
     sentencia : sentencia_condicional
     sentencia : sentencia_while
     sentencia : sentencia_print
-    sentencia : sentencia_percent
     """
     p[0] = p[1]
 
@@ -225,13 +224,6 @@ def p_sentencia_condicional_else(p):
     p[0] = Terceto(p[2], p[5], p[7], p[9], tipo="ifelse")
 
 
-def p_sentencia_percent(p):
-    """
-    sentencia_percent : PR_PERCENT factor COMA factor
-    """
-    # ej: (percent, expresion, expresion)
-    p[0] = Terceto(p[1], p[2], p[4], tipo="percent")
-
 def p_asig(p):
     """
     asig : ID OP_AS expresion
@@ -239,7 +231,7 @@ def p_asig(p):
     asig : ID OP_AS cte_string
     """
     simbolo = tabla_sim.obtener_variable(p[1])
-     # verificarAsignacion(simbolo, p[3])
+    # verificarAsignacion(simbolo, p[3])
 
     # (=, ID, exp)
     p[0] = Terceto(simbolo, p[3], tipo="asig")
@@ -282,8 +274,20 @@ def p_expresion(p):
     p[0] = Terceto(p[2], p[1], p[3], tipo="expresion")
 
 def p_expression_term(p):
-    'expresion : termino'
+    """
+    expresion : termino
+    expresion : expresion_percent
+    """
     p[0] = p[1]
+
+def p_expresion_percent(p):
+    """
+    expresion_percent : PR_PERCENT factor COMA factor
+    """
+    # ej: (percent, expresion, expresion)
+    terceto = Terceto('*', p[4], p[2], tipo="expresion")
+    simbolo = tabla_sim.declarar_cte_numerica(valor='100')
+    p[0] = Terceto('/', terceto, simbolo, tipo="expresion")
 
 def p_expression_funcion(p):
     'expresion : llamada_funcion'
