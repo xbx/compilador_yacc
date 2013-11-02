@@ -41,43 +41,34 @@ main:
     if_ = (
 """
 # if
-        %condicion_simple
+        %condicion
         %bloque
-%etiqueta_end:
+%etiqueta_salto:
 """
 )
     condicion_simple = (
 """
         %condicion
-        %tipo_condicion    %etiqueta_end
+        %tipo_condicion    %etiqueta_salto
 """
 )
     condicion_and_or = (
 """
         %condicion_izq
-        %tipo_condicion_izq    %etiqueta_end
+        %tipo_condicion_izq    %etiqueta_salto
         %condicion_der
-        %tipo_condicion_der    %etiqueta_end
+        %tipo_condicion_der    %etiqueta_salto
 """
 )
 
-    if_and_or = (
-"""
-# if
-%condicion_and_or
-        %bloque
-%etiqueta_end:
-"""
-)
     while_ = (
 """
 # while
-        jmp %etiqueta_condicion
-%etiqueta_do:
-        %bloque
 %etiqueta_condicion:
         %condicion
-        %tipo_condicion    %etiqueta_do
+        %bloque
+        jmp %etiqueta_condicion
+%etiqueta_do:
 """
 )
 

@@ -210,7 +210,7 @@ def p_sentencia_while(p):
     sentencia_while : PR_WHILE condicion DOS_PUNTOS ABRE_BLOQUE bloque CIERRA_BLOQUE
     """
     # (while, condicion, bloque)
-    p[0] = Terceto(p[1], p[2], p[5], tipo="while")
+    p[0] = Terceto(p[2], p[5], tipo="while")
 
 def p_sentencia_condicional(p):
     'sentencia_condicional : PR_IF condicion DOS_PUNTOS ABRE_BLOQUE bloque CIERRA_BLOQUE'
