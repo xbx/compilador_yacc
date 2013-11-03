@@ -40,6 +40,7 @@ tokens = [
    'PR_DEF',
    'PR_RETURN',
    'PR_STRING',
+   'PR_TECLA',
    'PAREN_ABRE',
    'PAREN_CIERRA',
    'COMA',
@@ -201,6 +202,8 @@ class Lexer(object):
                     token = Token(type="PR_PERCENT", value="percent")
                 elif token.value == 'else':
                     token = Token(type="PR_ELSE", value="else")
+                elif token.value == 'tecla':
+                    token = Token(type="PR_TECLA", value="tecla")
 
             self.cadena = ""
             # retorno del/de los token/s

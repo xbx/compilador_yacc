@@ -277,6 +277,7 @@ def p_expression_term(p):
     """
     expresion : termino
     expresion : expresion_percent
+    expresion : expresion_tecla
     """
     p[0] = p[1]
 
@@ -288,6 +289,14 @@ def p_expresion_percent(p):
     terceto = Terceto('*', p[4], p[2], tipo="expresion")
     simbolo = tabla_sim.declarar_cte_numerica(valor='100')
     p[0] = Terceto('/', terceto, simbolo, tipo="expresion")
+
+def p_expresion_tecla(p):
+    """
+    expresion_tecla : PR_TECLA PAREN_ABRE PAREN_CIERRA
+    """
+    # Ingreso de una caracter por teclado: tecla()
+    p[0] = Terceto(tipo="tecla")
+
 
 def p_expression_funcion(p):
     'expresion : llamada_funcion'

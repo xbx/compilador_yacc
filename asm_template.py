@@ -21,16 +21,16 @@ main:
 
 # contenido main
 %main
+
         # exit main
-        movl $44, %eax
         leave
         ret
         .size   main, .-main
         .section    .rodata
         .align 4
 # Constantes ------------------------------------
-.LC0:
-    .float
+LC0:
+    .long
     .align 4
 
 %cte_numericas
@@ -76,13 +76,22 @@ main:
 """
 # print
         movl    $%len, %edx
-        movl    %string, %ecx
+        %tipo_mov    %string, %ecx
         movl    $1, %ebx
         movl    $4, %eax
         int     $0x80
 """
 )
 
+    tecla = (
+"""
+# tecla
+        call    getchar
+        movl    %eax, -4(%ebp)
+        fildl    -4(%ebp)
+        fstps    -4(%ebp)
+"""
+)
     funcion = (
 """
 # funcion %nombre ------------------------------
@@ -107,9 +116,9 @@ main:
     .ascii "%valor\\n"
     .align 4
     .type   %nombre, @object
-    .size   %nombre, 6
 %nombre:
     .long   .%nombre
+    .set    %nombre_tam, .-%nombre+1
 """
 )
 

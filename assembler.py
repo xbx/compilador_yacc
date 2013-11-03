@@ -22,9 +22,6 @@ class TraductorAsm:
         for terceto in self.tercetos:
             if terceto.tipo == "programa":
                 asm = self.asm_terceto[terceto.items[0].id]
-                # Print hola mundo
-                # asm = asm + "\n" + Asm.print_.replace("%string", "str")
-                # asm = asm.replace("%len", "str_len")
                 self.asm = self.asm.replace('%main', asm)
             elif terceto.tipo == "main":
                 self.asm_terceto[terceto.id] = ""
@@ -152,14 +149,20 @@ class TraductorAsm:
                     if isinstance(valor, Simbolo):
                         # Nombre de la constante
                         valor = self.representar_operando(valor)
+                        terceto.items[0].etiqueta_cte = valor
                 asm += "        movl    %s, %%eax\n" % valor
                 asm = asm + "        movl    %%eax, -%s(%%ebp) # asig\n" % terceto.items[0].offset
                 self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == "print":
                 asm = Asm.print_
                 simbolo = terceto.items[0]
+                if simbolo.tipo == 'int':
+                    asm = asm.replace('%tipo_mov', 'leal')
+                    asm = asm.replace('%len', '1')  # TODO: hardcode len
+                else:
+                    asm = asm.replace('%tipo_mov', 'movl')
+                    asm = asm.replace('%len', '%s_tam' % simbolo.etiqueta_cte)  # TODO: hardcode len
                 asm = asm.replace('%string', self.representar_operando(simbolo))  # TODO: hardcode string
-                asm = asm.replace('%len', '6')  # TODO: hardcode len
                 self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == 'funcion':
                 simbolo = terceto.items[0]
@@ -190,6 +193,9 @@ class TraductorAsm:
             elif terceto.tipo == 'call':
                 terceto.variable_aux = '%eax'
                 self.asm_terceto[terceto.id] = "        andl    $-16, %%esp\n        call     %s\n" % terceto.items[0]
+            elif terceto.tipo == 'tecla':
+                terceto.variable_aux = '-4(%ebp)'
+                self.asm_terceto[terceto.id] = Asm.tecla
 
 
         # Limpiamos las marcas sin usar que pudieron haber quedado
@@ -245,6 +251,7 @@ class TraductorAsm:
                     asm_cte_string += asm_temp
                 elif simbolo.tipo == "cte_string":
                     asm_temp = Asm.cte_string.replace("%nombre", simbolo.nombre)
+                    asm_temp = asm_temp.replace("%tamanio", str(len(simbolo.valor)))
                     asm_temp = asm_temp.replace("%valor", simbolo.valor)
                     asm_cte_string += asm_temp
             else:
@@ -271,7 +278,7 @@ class TraductorAsm:
     def representar_operando(self, operando):
         if isinstance(operando, Simbolo):
             if operando.offset is not None:
-                return "   -%s(%%ebp)" % operando.offset
+                return "-%s(%%ebp)" % operando.offset
             else:
                 if operando.tipo == 'cte_numerica':
                     return "%s" % operando.nombre

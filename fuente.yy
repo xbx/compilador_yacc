@@ -1,6 +1,6 @@
 ## test
 dec:
-    int: numero, sumando
+    int: numero, sumando, pregunta
     string: ok, fin, llegando
 endec
 
@@ -30,14 +30,12 @@ while numero < 15:
         print llegando
     print fin
 
-ok = "**F**"
+pregunta = tecla()
+print pregunta
 
 numero = 100
+sumando = percent 60, 30
 
-print ok
-
-sumando = percent 10, 50
-
-if sumando == 5:
+if sumando == 18:
     print fin
 
