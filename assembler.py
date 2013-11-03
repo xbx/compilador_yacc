@@ -25,7 +25,7 @@ class TraductorAsm:
                 self.asm = self.asm.replace('%main', asm)
             elif terceto.tipo == "main":
                 self.asm_terceto[terceto.id] = ""
-                for item in [item for item in terceto.items if item.tipo == 'bloque']:
+                for item in [item for item in terceto.items if item.tipo in ['bloque', 'sentencia']]:
                     # Salteo las funciones porque no son parte de la rutina main
                     self.asm_terceto[terceto.id] += self.asm_terceto[item.id]
             elif terceto.tipo == "condicion":
@@ -61,7 +61,8 @@ class TraductorAsm:
                 asm = asm.replace('%etiqueta_salto', etiqueta_do)
                 asm = asm.replace('%bloque', bloque)
                 self.asm_terceto[terceto.id] = asm
-            elif terceto.tipo == "if":
+
+            elif terceto.tipo == "if" or terceto.tipo == "ifelse":
                 condicion = terceto.items[0]
                 tipo_condicion = condicion.items[0]
                 bloque = self.asm_terceto[terceto.items[1].id]
@@ -74,7 +75,6 @@ class TraductorAsm:
 
                     asm = Asm.if_
                     asm = asm.replace("%condicion", asm_condicion)
-                    asm = asm.replace('%etiqueta_salto', self.inventar_etiqueta(prefijo='ENDIF'))
                 else:
                     # condicion simple: a > b
                     asm_tipo = self.obtener_jump(tipo_condicion)
@@ -83,8 +83,14 @@ class TraductorAsm:
                     asm_condicion = asm_condicion.replace('%tipo_condicion', asm_tipo)
                     asm = Asm.if_
                     asm = asm.replace('%condicion', asm_condicion)
-                    asm = asm.replace('%etiqueta_salto', self.inventar_etiqueta(prefijo='ENDIF'))
 
+                asm = asm.replace('%etiqueta_salto', self.inventar_etiqueta(prefijo='IFSALTO'))
+                asm = asm.replace('%etiqueta_fin', self.inventar_etiqueta(prefijo='ENDIF'))
+                if terceto.tipo == 'ifelse':
+                    bloque_else = self.asm_terceto[terceto.items[2].id]
+                else:
+                    bloque_else = ""
+                asm = asm.replace('%bloque_else', bloque_else)
 
                 asm = asm.replace('%bloque', bloque)
                 self.asm_terceto[terceto.id] = asm
@@ -96,11 +102,11 @@ class TraductorAsm:
             elif terceto.tipo == "expresion":
                 asm = "\n# aritmetica\n"
 
-                operando1 = self.representar_operando_copro(terceto.items[1])
+                operando1 = self.representar_operando(terceto.items[1])
                 if isinstance(terceto.items[1], terceto.__class__):
                     asm += self.asm_terceto[terceto.items[1].id]
 
-                operando2 = self.representar_operando_copro(terceto.items[2])
+                operando2 = self.representar_operando(terceto.items[2])
                 if isinstance(terceto.items[2], terceto.__class__):
                     asm += self.asm_terceto[terceto.items[2].id]
 
@@ -274,6 +280,7 @@ class TraductorAsm:
     def declaraciones_funcion(self, simbolo_funcion):
         offset = 0
         for simbolo in self.tabla_sim:
+            # Buscamos el mayor offset
             if simbolo.ambito == simbolo_funcion.nombre and simbolo.offset > offset:
                 offset = simbolo.offset
         return str(offset)
@@ -287,15 +294,6 @@ class TraductorAsm:
                     return "%s" % operando.nombre
                 else:
                     return operando.nombre
-        elif isinstance(operando, str):
-            return operando
-
-    def representar_operando_copro(self, operando):
-        if isinstance(operando, Simbolo):
-            if operando.offset is not None:
-                return "   -%s(%%ebp)" % operando.offset
-            else:
-                return "%s" % operando.nombre
         elif isinstance(operando, str):
             return operando
         elif hasattr(operando, 'variable_aux'):

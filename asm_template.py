@@ -2,6 +2,7 @@ class Asm:
     base = (
 """
 # -----------------------------------------------
+    .comm ebp_main,4,4
     .text
 
 # FUNCIONES -------------------------------------
@@ -17,6 +18,11 @@ class Asm:
 main:
         pushl    %ebp
         movl     %esp, %ebp
+
+        # Resguardamos el ebp del main para globales
+        leal     (%ebp), %eax
+        movl     %eax, ebp_main
+        
         %declaraciones_main
 
 # contenido main
@@ -29,9 +35,12 @@ main:
         .section    .rodata
         .align 4
 # Constantes ------------------------------------
-LC0:
+.LC0:
     .long
     .align 4
+    .type   .LC0, @object
+LC0:
+    .long   .LC0
 
 %cte_numericas
 %cte_string
@@ -43,7 +52,10 @@ LC0:
 # if
         %condicion
         %bloque
+        jmp    %etiqueta_fin
 %etiqueta_salto:
+        %bloque_else
+%etiqueta_fin:
 """
 )
     condicion_simple = (
