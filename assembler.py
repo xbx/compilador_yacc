@@ -161,8 +161,11 @@ class TraductorAsm:
                     asm = asm.replace('%len', '1')  # TODO: hardcode len
                 else:
                     asm = asm.replace('%tipo_mov', 'movl')
-                    asm = asm.replace('%len', '%s_tam' % simbolo.etiqueta_cte)  # TODO: hardcode len
-                asm = asm.replace('%string', self.representar_operando(simbolo))  # TODO: hardcode string
+                    try:
+                        asm = asm.replace('%len', '%s_tam' % simbolo.etiqueta_cte)
+                    except:
+                        asm = asm.replace('%len', '%s_tam' % simbolo.nombre)
+                asm = asm.replace('%string', self.representar_operando(simbolo))
                 self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == 'funcion':
                 simbolo = terceto.items[0]

@@ -118,6 +118,7 @@ LC0:
     .type   %nombre, @object
 %nombre:
     .long   .%nombre
+    .ascii "%valor\\n"
     .set    %nombre_tam, .-%nombre+1
 """
 )

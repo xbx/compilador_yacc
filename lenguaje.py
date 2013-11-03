@@ -197,9 +197,9 @@ def p_sentencia_print(p):
     simbolo = tabla_sim.obtener_variable(p[2])
     p[0] = Terceto(simbolo, tipo="print")
 
-def p_sentencia_print_texto(p):
+def p_sentencia_print_cte_string(p):
     """
-    sentencia_print : PR_PRINT TEXTO   
+    sentencia_print : PR_PRINT cte_string
     """
     p[0] = Terceto(p[2], tipo="print")
 
