@@ -30,6 +30,7 @@ tokens = [
    'OP_DIV',
    'OP_RESTA',
    'OP_IGUALDAD',
+   'OP_RESTO',
    'PR_AND',
    'PR_OR',
    'PR_INT',

@@ -131,6 +131,8 @@ class TraductorAsm:
                     asm = asm + "        fmulp    %st, %st(1)\n"
                 if terceto.items[0] == '/':
                     asm = asm + "        fdivp    %st, %st(1)\n"
+                if terceto.items[0] == '%':
+                    asm = asm + "        call     fmod\n" # TODO: no funciona ok el mod
                 asm = asm + "        fstps    -4(%ebp)\n"
                 terceto.variable_aux = '-4(%ebp)'
                 self.asm_terceto[terceto.id] = asm
@@ -214,7 +216,7 @@ class TraductorAsm:
             out.write(self.asm)
 
     def compilar(self, asm, ejecutable):
-        system("/bin/gcc -m32 -o %s %s" % (ejecutable, asm))
+        system("/bin/gcc -lm -m32 -o %s %s" % (ejecutable, asm))
 
     def ejecutar(self, ejecutable):
         system("./%s" % ejecutable)

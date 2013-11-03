@@ -269,6 +269,7 @@ def p_expresion(p):
     expresion : expresion OP_RESTA termino
     expresion : expresion OP_MUL termino
     expresion : expresion OP_DIV termino
+    expresion : expresion OP_RESTO termino
     """
     # (+, exp, ter)
     p[0] = Terceto(p[2], p[1], p[3], tipo="expresion")

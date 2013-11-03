@@ -38,6 +38,7 @@ matriz = {
         ('-', ["24", '', '', Lexer.acc_NADA]),
         ('\"', ["25", '', '', Lexer.acc_NADA]),
         ('\'', ["27", '', '', Lexer.acc_NADA]),
+        ('%', ["29", '', '', Lexer.acc_NADA]),
 
     ]),
     "1": OrderedDict([
@@ -141,5 +142,8 @@ matriz = {
     ]),
     "28": OrderedDict([
         (Val.CUALQUIER, [Val.E_FINAL, "TEXTO", "", Lexer.acc_NADA]),
+    ]),
+    "29": OrderedDict([
+        (Val.CUALQUIER, [Val.E_FINAL, "OP_RESTO", "", Lexer.acc_NADA]),
     ]),
 }
