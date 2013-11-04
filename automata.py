@@ -42,7 +42,7 @@ matriz = {
 
     ]),
     "1": OrderedDict([
-        ("[a-zA-Z0-9]", ["1", '', '', Lexer.acc_NADA]),
+        ("[a-zA-Z0-9_]", ["1", '', '', Lexer.acc_NADA]),
         (Val.CUALQUIER, [Val.E_FINAL, "ID", '', Lexer.acc_NADA]),
     ]),
     "2": OrderedDict([

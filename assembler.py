@@ -105,22 +105,46 @@ class TraductorAsm:
                 operando1 = self.representar_operando(terceto.items[1])
                 if isinstance(terceto.items[1], terceto.__class__):
                     asm += self.asm_terceto[terceto.items[1].id]
+                    print terceto
+                    fld1 = terceto.items[1].tipo_fld
+                elif isinstance(terceto.items[1], Simbolo):
+                    if terceto.items[1].tipo == 'int':
+                        fld1 = 'filds'
+                    elif terceto.items[1].tipo == 'float':
+                        fld1 = 'flds'
+                    else:
+                        fld1 = 'flds'
+
 
                 operando2 = self.representar_operando(terceto.items[2])
                 if isinstance(terceto.items[2], terceto.__class__):
                     asm += self.asm_terceto[terceto.items[2].id]
+                    fld2 = terceto.items[2].tipo_fld
+                elif isinstance(terceto.items[1], Simbolo):
+                    if terceto.items[1].tipo == 'int':
+                        fld2 = 'filds'
+                    elif terceto.items[1].tipo == 'float':
+                        fld2 = 'flds'
+                    else:
+                        fld2 = 'flds'
 
                 # Operando 2 a copro
                 if operando2 == '%eax':
                     asm = asm + "        movl   %s, -4(%%ebp)\n" % operando2
                     operando2 = '-4(%ebp)'
-                asm = asm + "        flds   %s\n" % operando2
+                asm = asm + "        %s   %s\n" % (fld2, operando2)
 
                 # Operando 1 a copro
                 if operando1 == '%eax':
                     asm = asm + "        movl   %s, -4(%%ebp)\n" % operando1
                     operando1 = '-4(%ebp)'
-                asm = asm + "        flds   %s\n" % operando1
+                asm = asm + "        %s   %s\n" % (fld1, operando1)
+
+
+                if (fld1, fld2) == ('filds', 'filds'):
+                    terceto.tipo_fld = 'fild'
+                else:
+                    terceto.tipo_fld = 'fld'
 
                 if terceto.items[0] == '+':
                     asm = asm + "        faddp    %st, %st(1)\n"
@@ -133,7 +157,12 @@ class TraductorAsm:
                     asm = asm + "        fdivp    %st, %st(1)\n"
                 if terceto.items[0] == '%':
                     asm = asm + "        call     fmod\n" # TODO: no funciona ok el mod
-                asm = asm + "        fstps    -4(%ebp)\n"
+
+                if terceto.tipo_fld == 'fild':
+                    asm = asm + "        fistpl    -4(%ebp)\n"
+                else:
+                    asm = asm + "        fstps    -4(%ebp)\n"
+
                 terceto.variable_aux = '-4(%ebp)'
                 self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == "sentencia":
@@ -203,7 +232,13 @@ class TraductorAsm:
                 self.asm = self.asm.replace('%funciones', asm)
             elif terceto.tipo == 'call':
                 terceto.variable_aux = '%eax'
-                self.asm_terceto[terceto.id] = "        andl    $-16, %%esp\n        call     %s\n" % terceto.items[0]
+                nombre_fun = terceto.items[0]
+                self.asm_terceto[terceto.id] = "        andl    $-16, %%esp\n        call     %s\n" % nombre_fun
+                simbolo_fun = self.tabla_sim.obtener_variable(nombre_fun)
+                if simbolo_fun.tipo_retorno == 'int':
+                    terceto.tipo_fld = 'fild'
+                elif simbolo_fun.tipo_retorno == 'float':
+                    terceto.tipo_fld = 'fld'
             elif terceto.tipo == 'tecla':
                 terceto.variable_aux = '-4(%ebp)'
                 self.asm_terceto[terceto.id] = Asm.tecla
@@ -250,16 +285,14 @@ class TraductorAsm:
         for simbolo in self.tabla_sim:
             if simbolo.ambito == 'global':
                 # Constantes (globales)
-                if simbolo.tipo == "cte_numerica":
-                    if '.' in simbolo.valor:
-                        valor = simbolo.valor
-                    else:
-                        # Forzamos a que sean siempre reales
-                        valor = "%s.0" % simbolo.valor
-                        # valor = simbolo.valor
-                    asm_temp = Asm.cte_numerica.replace("%nombre", simbolo.nombre)
+                if simbolo.tipo == "cte_float":
+                    asm_temp = Asm.cte_float.replace("%nombre", simbolo.nombre)
                     asm_temp = asm_temp.replace("%valor", simbolo.valor)
-                    asm_cte_string += asm_temp
+                    asm_cte_numericas += asm_temp
+                if simbolo.tipo == "cte_int":
+                    asm_temp = Asm.cte_int.replace("%nombre", simbolo.nombre)
+                    asm_temp = asm_temp.replace("%valor", simbolo.valor)
+                    asm_cte_numericas += asm_temp
                 elif simbolo.tipo == "cte_string":
                     asm_temp = Asm.cte_string.replace("%nombre", simbolo.nombre)
                     asm_temp = asm_temp.replace("%tamanio", str(len(simbolo.valor)))
@@ -292,7 +325,7 @@ class TraductorAsm:
             if operando.offset is not None:
                 return "-%s(%%ebp)" % operando.offset
             else:
-                if operando.tipo == 'cte_numerica':
+                if operando.tipo in ['cte_float', 'cte_int']:
                     return "%s" % operando.nombre
                 else:
                     return operando.nombre

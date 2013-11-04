@@ -147,7 +147,7 @@ def p_funcion(p):
      )
 
     # Tabla de simbolos
-    simbolo = tabla_sim.declarar_funcion(nombre=p[2])
+    simbolo = tabla_sim.declarar_funcion(nombre=p[2], tipo_retorno=p[4])
 
     # Terceto: id, tipo_dato, bloque, return_expresion
     p[0] = Terceto(simbolo, p[4], p[7], p[10], tipo="funcion")

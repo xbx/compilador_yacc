@@ -13,7 +13,7 @@ def funcion1: int
         aux = aux + 1
 return aux
 
-ok = "--:  "
+ok = "Inicio:  "
 print ok
 
 sumando = 3
@@ -22,7 +22,7 @@ fin = "Si  "
 
 numero = funcion1() + 1
 
-while numero < 15:
+while numero < 150:
     numero = numero + 1
     sumando = numero
     while sumando < 15:

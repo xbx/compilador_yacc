@@ -87,11 +87,11 @@ LC0:
     print_ = (
 """
 # print
-        movl    $%len, %edx
-        %tipo_mov    %string, %ecx
-        movl    $1, %ebx
-        movl    $4, %eax
-        int     $0x80
+        movl    $%len, %edx        # tamanio
+        %tipo_mov    %string, %ecx # string
+        movl    $1, %ebx           # sys write
+        movl    $4, %eax           # stdout
+        int     $0x80              # syscall
 """
 )
 
@@ -135,10 +135,18 @@ LC0:
 """
 )
 
-    cte_numerica = (
+    cte_float = (
 """
 %nombre:
     .float %valor
+    .align 4
+"""
+)
+
+    cte_int = (
+"""
+%nombre:
+    .int %valor
     .align 4
 """
 )

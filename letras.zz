@@ -1,0 +1,36 @@
+## UNLAM 2013 - LyC
+## Bravo, Giorgi, Francischini
+## test letras
+
+
+dec:
+    int: letra_a, letra, i, enter
+endec
+
+enter = 10
+
+print "Letras minusculas:"
+letra_a = 97
+print enter
+i = 0
+while i < 26:
+    letra = letra_a + i
+    print letra
+    i = i + 1
+
+print enter
+
+print "Letras mayusculas:"
+letra_a = 65
+print enter
+i = 0
+while i < 26:
+    letra = letra_a + i
+    print letra
+    i = i + 1
+
+print enter
+
+
+print "fin"
+print enter

@@ -1,0 +1,30 @@
+## UNLAM 2013 - LyC
+## Bravo, Giorgi, Francischini
+## test letras pares
+
+dec:
+    int: n1, n2, enter, dos
+endec
+
+def funcion1: int
+    dec:
+        int: aux
+    endec
+    aux = 1
+    while aux < 2:
+        aux = aux + 1
+return aux
+
+enter = 10
+
+print "Inicio letras pares:  "
+print enter
+
+n1 = 65
+while n1 < 90:
+    print n1
+    print enter
+    dos = funcion1()
+    n1 = n1 + 2
+
+print "----Fin----"

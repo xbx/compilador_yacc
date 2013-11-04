@@ -7,7 +7,8 @@ class Val():
     S_TIPO_FLOAT = 'float'
     S_TIPO_FUNCION = 'funcion'
     S_TIPO_CTE_STRING = 'cte_string'
-    S_TIPO_CTE_NUMERICA = 'cte_numerica'
+    S_TIPO_CTE_FLOAT = 'cte_float'
+    S_TIPO_CTE_INT = 'cte_int'
 
 class Simbolo():
     def __init__(self):
@@ -68,14 +69,18 @@ class TablaSim():
         simbolo.id = self.ultimo_id
         self.ultimo_id = self.ultimo_id + 1
         simbolo.nombre = '_' + str(valor)
-        simbolo.tipo = Val.S_TIPO_CTE_NUMERICA
+        if '.' in valor:
+            tipo = Val.S_TIPO_CTE_FLOAT
+        else:
+            tipo = Val.S_TIPO_CTE_INT
+        simbolo.tipo = tipo
         simbolo.ambito = "global"
         simbolo.valor = valor
 
         self.insertar_en_tabla(simbolo)
         return simbolo
 
-    def declarar_funcion(self, nombre):
+    def declarar_funcion(self, nombre, tipo_retorno):
         # Agregamos el simbolo 'funcion'
         simbolo = Simbolo()
         simbolo.id = self.ultimo_id
@@ -83,6 +88,7 @@ class TablaSim():
         simbolo.nombre = nombre
         simbolo.tipo = Val.S_TIPO_FUNCION
         simbolo.ambito = 'main'  # Toda funcion esta en ambito main
+        simbolo.tipo_retorno = tipo_retorno
         self.insertar_en_tabla(simbolo)
 
         # Agregamos sus declaraciones que hasta el momento no se sabia
