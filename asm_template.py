@@ -100,8 +100,12 @@ LC0:
 # tecla
         call    getchar
         movl    %eax, -4(%ebp)
-        fildl    -4(%ebp)
-        fstps    -4(%ebp)
+tecla:
+        call    getchar
+        cmpl    %eax, _10
+        jne     tecla
+        # fildl    -4(%ebp)
+        # fstps    -4(%ebp)
 """
 )
     funcion = (

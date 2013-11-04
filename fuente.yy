@@ -1,41 +1,30 @@
 ## test
 dec:
-    int: numero, sumando, pregunta
-    string: ok, fin, llegando
+    int: letra, enter, flush
+    string: incorrecto
 endec
 
-def funcion1: int
+def preguntar_letra: int
     dec:
-        int: aux
+        int: letra
     endec
-    aux = 1
-    while aux < 8:
-        aux = aux + 1
-return aux
+    letra = tecla()
+return letra
 
-ok = "Inicio:  "
-print ok
+enter = 10
 
-sumando = 3
-llegando = " -   "
-fin = "Si  "
+print "Ctrl-C para finalizar"
 
-numero = funcion1() + 1
+print "Ingrese la letra A:"
 
-while numero < 150:
-    numero = numero + 1
-    sumando = numero
-    while sumando < 15:
-        sumando = sumando + 1
-        print llegando
-    print fin
+incorrecto = "Incorrecto!!"
 
-pregunta = tecla()
-print pregunta
+while 1 == 1:
+    letra = preguntar_letra()
+    if letra == 65:
+        print ">>>> Correcto!"
+    else
+        print incorrecto
 
-numero = 100
-sumando = percent 60, 30
-
-if sumando == 18:
-    print fin
-
+print enter
+print "fin"

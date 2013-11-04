@@ -156,7 +156,7 @@ class TraductorAsm:
                 if terceto.items[0] == '/':
                     asm = asm + "        fdivp    %st, %st(1)\n"
                 if terceto.items[0] == '%':
-                    asm = asm + "        call     fmod\n" # TODO: no funciona ok el mod
+                    asm = asm + "        call     fmod\n"  # TODO: no funciona ok el mod
 
                 if terceto.tipo_fld == 'fild':
                     asm = asm + "        fistpl    -4(%ebp)\n"
