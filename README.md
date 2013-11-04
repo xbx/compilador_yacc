@@ -14,7 +14,7 @@ Basado en PLY (Python Lex-Yacc)
 * Ej: http://www.dalkescientific.com/writings/NBN/parsing_with_ply.html
 
 
-Introcucción
+Introducción
 ============
 Compilador de lenguaje experimental "ZZ". Inspirado por python y C. Ejemplos en \*.zz
 
@@ -72,38 +72,45 @@ YACC (PLY) se encarga de verificar el fuente en cuestión aplicando las reglas q
 
 La salida de esta ejecución es:
 * Tira de tokens:
+
     En pantalla los tokens que fueron reconocidos en orden. Lo cual es util para ver errores de sintaxis cuando estos ocurren. Ej:
-```
-Tokens:
-=======
 
-<Token: PR_DEC, dec>
-<Token: DOS_PUNTOS, :>
-<Token: ABRE_BLOQUE,  {>
-<Token: PR_INT, int>
-<Token: DOS_PUNTOS, :>
-<Token: ID, numero>
-<Token: COMA, ,>
-<Token: ID, sumando>
-<Token: COMA, ,>
-...
-```
+    ```
+    Tokens:
+    =======
+    
+    <Token: PR_DEC, dec>
+    <Token: DOS_PUNTOS, :>
+    <Token: ABRE_BLOQUE,  {>
+    <Token: PR_INT, int>
+    <Token: DOS_PUNTOS, :>
+    <Token: ID, numero>
+    <Token: COMA, ,>
+    <Token: ID, sumando>
+    <Token: COMA, ,>
+    ...
+    ```
 * Archivo simbolos.txt
-    Tabla de simbolos resultante del parsing. Ultil para la siguiente etapa: Compilación
-```
-Simbolos:
-=========
 
-Id   Nombre Tipo   Ambito  Offset stack
-8   | _8   | cte_int   | global   |  None
-23   | _100   | cte_int   | global   |  None
-16   | _150   | cte_int   | global   |  None
-12   | _3   | cte_int   | global   |  None
-...
-```
+    Tabla de simbolos resultante del parsing. Ultil para la siguiente etapa: Compilación
+
+    ```
+    Simbolos:
+    =========
+    
+    Id   Nombre Tipo   Ambito  Offset stack
+    8   | _8   | cte_int   | global   |  None
+    23   | _100   | cte_int   | global   |  None
+    16   | _150   | cte_int   | global   |  None
+    12   | _3   | cte_int   | global   |  None
+    ...
+    ```
 * Archivo parser.out
+
     Autogenerado por YACC (PLY) donde encontramos información muy detallada sobre el proceso de parsing resultante. Lista de reglas BNF y estados por los cuales el parser pasó.
+    
 * Archivo intermedia.txt
+
     Principal salida (junto a simbolos.txt) donde se encuentran los Tercetos necesarios para luego generar Assembler.
 
 lexer.py
@@ -158,48 +165,52 @@ Salida
 ------
 
 * Archivo programa.s
+
     Contiene el assembler generado para el programa fuente ZZ en cuestión. Ej de una porción de programa (loop while):
-```
-# while
-.CONDICION_2:
+
+    ```
+    # while
+    .CONDICION_2:
+        
+            movl    _26, %eax
+            movl    -8(%ebp), %edx
+            cmpl    %eax, %edx
+            jge    .DO_1
     
-        movl    _26, %eax
-        movl    -8(%ebp), %edx
-        cmpl    %eax, %edx
-        jge    .DO_1
-
+        
+    # aritmetica
+            filds   -8(%ebp)
+            filds   -20(%ebp)
+            faddp    %st, %st(1)
+            fistpl    -4(%ebp)
+            movl    -4(%ebp), %eax
+            movl    %eax, -12(%ebp) # asig
     
-# aritmetica
-        filds   -8(%ebp)
-        filds   -20(%ebp)
-        faddp    %st, %st(1)
-        fistpl    -4(%ebp)
-        movl    -4(%ebp), %eax
-        movl    %eax, -12(%ebp) # asig
-
-# print
-        movl    $1, %edx        # tamanio
-        leal    -12(%ebp), %ecx # string
-        movl    $1, %ebx           # sys write
-        movl    $4, %eax           # stdout
-        int     $0x80              # syscall
-
-# aritmetica
-        filds   _1  
-        filds   -8(%ebp)
-        faddp    %st, %st(1)
-        fistpl    -4(%ebp)
-        movl    -4(%ebp), %eax
-        movl    %eax, -8(%ebp) # asig
-
-        jmp .CONDICION_2
-.DO_1:
-
-```
+    # print
+            movl    $1, %edx        # tamanio
+            leal    -12(%ebp), %ecx # string
+            movl    $1, %ebx           # sys write
+            movl    $4, %eax           # stdout
+            int     $0x80              # syscall
+    
+    # aritmetica
+            filds   _1  
+            filds   -8(%ebp)
+            faddp    %st, %st(1)
+            fistpl    -4(%ebp)
+            movl    -4(%ebp), %eax
+            movl    %eax, -8(%ebp) # asig
+    
+            jmp .CONDICION_2
+    .DO_1:
+    
+    ```
 
 * Archivo programa
+
     Finalmente, el ejecutable en formato ELF (x86_64 o i386 segun arquitectura SO)
     Ejecución:
-```
-$ ./programa
-```
+
+    ```
+    $ ./programa
+    ```
