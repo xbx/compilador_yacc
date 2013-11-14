@@ -3,38 +3,49 @@
 ## test letras
 
 dec:
-    int: ultimo, enter
-    string: saludo
+    int: ultimo, enter, letra_main
+    string: saludo, bye
 endec
 
-def minusculas: int
+def alfabeto: int
     dec:
-        int: letra_a, letra, i, enter
+        int: letra_local, letra, i, enterlocal
     endec
 
-    enter = 10
+    ## Lectura de la variable del main, se pasa a una local para poder usarla
+    ## Se usa la cadena estatica
+    enterlocal = enter
+    print enterlocal
 
-    print "Letras minusculas:"
-    letra_a = 97
-    print enter
+    letra_local = letra_main
+    print enterlocal
     i = 0
     while i < 26:
-        letra = letra_a + i
+        letra = letra_local + i
         print letra
         i = i + 1
-    print enter
+    print enterlocal
 return i
 
-enter = 10
+## Este valor global sera leido por la funcion 
+enter = 5 + 5
 saludo = "Hasta luego"
+bye = saludo
 
-ultimo = minusculas()
+print "Letras minusculas:"
 print enter
-ultimo = minusculas()
+print "=================="
+letra_main = 97
+ultimo = alfabeto()
+print enter
 
-print "fin:"
+print "Letras mayusculas:"
+print enter
+print "=================="
+letra_main = 65
+ultimo = alfabeto()
 
 print enter
-print saludo
+print bye
 print enter
 

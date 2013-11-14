@@ -174,6 +174,8 @@ class TraductorAsm:
                         pass
                 self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == "asig":
+                bajar = ''
+                subir = ''
                 asm = ""
                 if isinstance(terceto.items[1], terceto.__class__):
                     # Un terceto, ej el resultado de una suma
@@ -182,12 +184,19 @@ class TraductorAsm:
                     valor = terceto.items[1].variable_aux
                 else:
                     # Valor literal, ej "123"
-                    valor = terceto.items[1]
-                    if isinstance(valor, Simbolo):
+                    operando = terceto.items[1]
+                    if isinstance(operando, Simbolo):
                         # Nombre de la constante
-                        valor = self.representar_operando(valor)
-                        terceto.items[0].etiqueta_cte = valor
+                        valor = self.representar_operando(operando)
+                        if operando.tipo in ['int', 'float']:
+                            bajar, subir = self.cadena_estatica(operando)
+                        elif 'cte_' not in operando.tipo:
+                            terceto.items[0].etiqueta_cte = operando.etiqueta_cte
+                        elif 'cte_' in operando.tipo:
+                            terceto.items[0].etiqueta_cte = valor
+                asm += bajar # Bajar por la cadena estatica
                 asm += "        movl    %s, %%eax\n" % valor
+                asm += subir # Subir por la cadena estatica
                 asm = asm + "        movl    %%eax, -%s(%%ebp) # asig\n" % terceto.items[0].offset
                 self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == "print":
@@ -231,15 +240,27 @@ class TraductorAsm:
                 self.asm_terceto[terceto.id] = asm
                 self.asm = self.asm.replace('%funciones', asm)
             elif terceto.tipo == 'call':
+                # Llamada a una funcion, ej: mi_suma()
                 terceto.variable_aux = '%eax'
                 nombre_fun = terceto.items[0]
-                self.asm_terceto[terceto.id] = "        andl    $-16, %%esp\n        call     %s\n" % nombre_fun
+                self.asm_terceto[terceto.id] = ("#        andl    $-16, %%esp" # TODO: Revisar
+                                              "\n        mov      -8(%%ebp), %%eax\n"
+                                              "\n        push     %%eax\n"
+                                              "\n        call     %s\n"
+                                              "\n        addl     $4, %%esp\n") \
+                                                % nombre_fun
                 simbolo_fun = self.tabla_sim.obtener_variable(nombre_fun)
+
+                # Se deja "guardado" el tipo de variable de retorno de la funcion
+                # Para ser usado luego en una expresion aritmetica
                 if simbolo_fun.tipo_retorno == 'int':
+                    # Si es un int se cargara al copro con fild
                     terceto.tipo_fld = 'fild'
                 elif simbolo_fun.tipo_retorno == 'float':
+                    # Si es un float se cargara al copro como fld
                     terceto.tipo_fld = 'fld'
             elif terceto.tipo == 'tecla':
+                # Funcion tecla() (ingreo de un char por teclado)
                 terceto.variable_aux = '-4(%ebp)'
                 self.asm_terceto[terceto.id] = Asm.tecla
 
@@ -301,9 +322,13 @@ class TraductorAsm:
             else:
                 # Variables para el stack (Se calcula offset)
                 try:
+                    # 4 es el taman~io default para todo alacenamiento
                     offset[simbolo.ambito] = offset[simbolo.ambito] + 4
                 except KeyError:
-                    offset[simbolo.ambito] = 8
+                    # Importante
+                    # Se reserva en R.A. el -4(%ebp) para usos varios
+                    # y el -8(%ebp) para cadena estatica
+                    offset[simbolo.ambito] = 12
                 simbolo.offset = offset[simbolo.ambito]
 
         declaraciones_main = ("# declaraciones\n"
@@ -333,6 +358,25 @@ class TraductorAsm:
             return operando
         elif hasattr(operando, 'variable_aux'):
             return operando.variable_aux
+
+    def cadena_estatica(self, operando):
+        baja = ''
+        sube = ''
+        if isinstance(operando, Simbolo):
+            if operando.offset is not None and operando.ambito == 'main':
+                baja = ('\n        movl    %ebp, %edx # resguardo %ebp\n'
+                        '        movl    8(%ebp), %ebp # Bajo 1 en la cadena\n')
+                sube = '        movl     %edx, %ebp # restauro %ebp\n'
+                return baja, sube
+            else:
+                if operando.tipo in ['cte_float', 'cte_int']:
+                    return baja, sube
+                else:
+                    return baja, sube
+        elif isinstance(operando, str):
+            return baja, sube
+        elif hasattr(operando, 'variable_aux'):
+            return baja, sube
 
     def limpiar_marcas(self):
         self.asm = self.asm.replace('%funciones', '')

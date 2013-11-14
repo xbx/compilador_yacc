@@ -2,7 +2,6 @@ class Asm:
     base = (
 """
 # -----------------------------------------------
-    .comm ebp_main,4,4
     .text
 
 # FUNCIONES -------------------------------------
@@ -19,11 +18,13 @@ main:
         pushl    %ebp
         movl     %esp, %ebp
 
-        # Resguardamos el ebp del main para globales
-        leal     (%ebp), %eax
-        movl     %eax, ebp_main
-        
         %declaraciones_main
+
+        # Cadena estatica, en main es a si mismo
+        #leal     (%ebp), %eax
+        #movl     %eax, -8(%ebp)
+        movl     %ebp, -8(%ebp)
+
 
 # contenido main
 %main
