@@ -130,12 +130,11 @@ tecla:
 """
 .%nombre:
     .ascii "%valor\\n"
-    .align 4
     .type   %nombre, @object
 %nombre:
     .long   .%nombre
     .ascii "%valor\\n"
-    .set    %nombre_tam, .-%nombre+1
+    .set    %nombre_tam, .-%nombre-5
 """
 )
 

@@ -3,7 +3,8 @@
 ## test letras
 
 dec:
-    int: ultimo
+    int: ultimo, enter
+    string: saludo
 endec
 
 def minusculas: int
@@ -24,6 +25,16 @@ def minusculas: int
     print enter
 return i
 
+enter = 10
+saludo = "Hasta luego"
+
+ultimo = minusculas()
+print enter
 ultimo = minusculas()
 
-print "fin"
+print "fin:"
+
+print enter
+print saludo
+print enter
+
