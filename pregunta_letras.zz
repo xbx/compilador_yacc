@@ -16,13 +16,13 @@ enter = 10
 print "Ctrl-C para finalizar"
 
 print enter
-print "Ingrese la letra A:"
+print "Ingrese letra minuscula:"
 
 incorrecto = "Incorrecto!!"
 
 while 1 == 1:
     letra = preguntar_letra()
-    if letra == 65:
+    if letra between 97 & 122:
         print ">>>> Correcto!"
     else
         print incorrecto

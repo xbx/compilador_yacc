@@ -260,8 +260,18 @@ def p_condicion_between(p):
     """
     condicion : factor PR_BETWEEN factor PR_AND factor
     """
+    # letra between 97 and 122
+    # letra >= 97 & letra <= 122
     # ej: (<, expresion, expresion)
-    p[0] = Terceto(p[2], p[1], p[3], p[5], tipo="condicion_between")
+
+    # 11: condicion(>=, sim0[int:letra], sim12[cte_int:_97])
+    izq = Terceto('>=', p[1], p[3], tipo="condicion")
+
+    # 12: condicion(<=, sim0[int:letra], sim13[cte_int:_122])
+    der = Terceto('<=', p[1], p[5], tipo="condicion")
+
+    # 13: condicion(&, ter[11], ter[12])
+    p[0] = Terceto('&', izq, der, tipo="condicion")
 
 def p_expresion(p):
     """

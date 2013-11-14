@@ -21,8 +21,6 @@ main:
         %declaraciones_main
 
         # Cadena estatica, en main es a si mismo
-        #leal     (%ebp), %eax
-        #movl     %eax, -8(%ebp)
         movl     %ebp, -8(%ebp)
 
 
