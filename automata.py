@@ -107,15 +107,15 @@ matriz = {
         "18": OrderedDict([
         (Val.CUALQUIER, ["F", 'OP_IGUALDAD', '', Lexer.acc_NADA]),
     ]),
-    
+
     "20": OrderedDict([
         ("[0-9]", ["20", "", "", Lexer.acc_NADA]),
         ("\.", ["20.1", "", "", Lexer.acc_NADA]),
-        (Val.CUALQUIER, [Val.E_FINAL, "CTE_ENT", "\.", Lexer.acc_NADA]),
+        (Val.CUALQUIER, [Val.E_FINAL, "CTE_ENT", "\.", Lexer.acc_CTE_ENT]),
     ]),
     "20.1": OrderedDict([
         ("[0-9]", ["20.1", "", "", Lexer.acc_NADA]),
-        (Val.CUALQUIER, [Val.E_FINAL, "CTE_REAL", "\.", Lexer.acc_NADA]),
+        (Val.CUALQUIER, [Val.E_FINAL, "CTE_REAL", "\.", Lexer.acc_CTE_REAL]),
     ]),
     "21": OrderedDict([
         (Val.CUALQUIER, [Val.E_FINAL, "COMA", "", Lexer.acc_NADA]),

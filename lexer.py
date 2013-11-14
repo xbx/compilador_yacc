@@ -7,6 +7,7 @@ TP Compilador - Analizador Lexico
 """
 # coding=utf8
 import re
+from ctypes import c_float
 tokens = [
    'ID',
    'OP_AS',
@@ -68,6 +69,8 @@ class Val(object):
 
     """ Cotas """
     MAX_CTE_STRING = 40
+    MIN_CTE_ENT = -32768
+    MAX_CTE_ENT = 32767
 
 class Lexer(object):
     """
@@ -231,11 +234,23 @@ class Lexer(object):
     def acc_RESET_NIVEL_SENTENCIA(self, simbolo):
         self.nivel_espacios_sentencia = 0
 
+    ##########################################################
+    # Cotas
     def acc_CTE_STRING(self, simbolo):
         # Ignoramos las comillas de abrir y cerrar
         self.cadena = self.cadena[1:-1]
         if len(self.cadena) > Val.MAX_CTE_STRING:
             raise TypeError("CTE_STRING muy larga. Limite %s, largo: %s" % (Val.MAX_CTE_STRING, len(self.cadena)))
+    def acc_CTE_ENT(self, simbolo):
+        entero = int(self.cadena[:-1])
+        if entero > Val.MAX_CTE_ENT or entero < Val.MIN_CTE_ENT:
+            raise TypeError("CTE_ENT fuera de rango: %s a %s" % (Val.MAX_CTE_ENT, Val.MIN_CTE_ENT))
+    def acc_CTE_REAL(self, simbolo):
+        real = float(self.cadena[:-1])
+        # Validacion verdadera contra un flotante de C.
+        if str(c_float(real).value) == 'inf':
+            raise TypeError("CTE_REAL %s fuera de rango: " % real)
+    ##########################################################
 
     def acc_FIN_LINEA(self, simbolo):
         if simbolo == " ":  # Bloque (tab)

@@ -2,6 +2,7 @@
 dec:
     int: letra, enter, flush
     string: incorrecto
+    float: f
 endec
 
 def preguntar_letra: int
@@ -13,7 +14,7 @@ return letra
 
 enter = 10
 
-print "Ctrl-C para finalizar"
+f = 0.5
 
 print "Ingrese la letra A:"
 
