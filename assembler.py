@@ -174,6 +174,7 @@ class TraductorAsm:
                         pass
                 self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == "asig":
+                # variable = valor
                 bajar = ''
                 subir = ''
                 asm = ""
@@ -194,10 +195,36 @@ class TraductorAsm:
                             terceto.items[0].etiqueta_cte = operando.etiqueta_cte
                         elif 'cte_' in operando.tipo:
                             terceto.items[0].etiqueta_cte = valor
-                asm += bajar # Bajar por la cadena estatica
-                asm += "        movl    %s, %%eax\n" % valor
-                asm += subir # Subir por la cadena estatica
-                asm = asm + "        movl    %%eax, -%s(%%ebp) # asig\n" % terceto.items[0].offset
+                if not hasattr(terceto.items[1], 'ambito'):
+                    # Por ej si es un terceto
+                    ambito_operando = '-'
+                else:
+                    ambito_operando = operando.ambito
+                if terceto.items[0].ambito == 'main' and ambito_operando == 'main':
+                    # Si son del main, asigno  luego subo
+                    asm += bajar # Bajar por la cadena estatica
+                    asm += "        movl    %s, %%eax\n" % valor
+                    asm = asm + "        movl    %%eax, -%s(%%ebp) # asig\n" % terceto.items[0].offset
+                    asm += subir # Subir por la cadena estatica
+                elif terceto.items[0].ambito == 'main' and ambito_operando != 'main':
+                    # Si variable es local, subo para poder asignar a local
+                    asm += "        movl    %s, %%eax\n" % valor
+                    asm += bajar # Bajar por la cadena estatica
+                    asm = asm + "        movl    %%eax, -%s(%%ebp) # asig\n" % terceto.items[0].offset
+                    asm += subir # Subir por la cadena estatica
+                elif terceto.items[0].ambito != 'main' and ambito_operando == 'main':
+                    # Si variable es local, subo para poder asignar a local
+                    asm += bajar # Bajar por la cadena estatica
+                    asm += "        movl    %s, %%eax\n" % valor
+                    asm += subir # Subir por la cadena estatica
+                    asm = asm + "        movl    %%eax, -%s(%%ebp) # asig\n" % terceto.items[0].offset
+                elif terceto.items[0].ambito != 'main' and ambito_operando != 'main':
+                    # Si variable es local, subo para poder asignar a local
+                    asm += bajar # Bajar por la cadena estatica
+                    asm += subir # Subir por la cadena estatica
+                    asm += "        movl    %s, %%eax\n" % valor
+                    asm = asm + "        movl    %%eax, -%s(%%ebp) # asig\n" % terceto.items[0].offset
+
                 self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == "print":
                 asm = Asm.print_
@@ -360,12 +387,13 @@ class TraductorAsm:
             return operando.variable_aux
 
     def cadena_estatica(self, operando):
-        baja = ''
-        sube = ''
+        baja = "#no baja\n"
+        sube = "#no sube\n"
         if isinstance(operando, Simbolo):
-            if operando.offset is not None and operando.ambito == 'main':
+            if operando.offset is not None:
                 baja = ('\n        movl    %ebp, %edx # resguardo %ebp\n'
-                        '        movl    8(%ebp), %ebp # Bajo 1 en la cadena\n')
+                        '        movl    8(%ebp), %ebp # Bajo 1 en la cadena\n'
+                        )
                 sube = '        movl     %edx, %ebp # restauro %ebp\n'
                 return baja, sube
             else:

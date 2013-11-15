@@ -115,8 +115,12 @@ tecla:
 %nombre:
         pushl   %ebp
         movl    %esp, %ebp
-
         subl    $%offset_declaraciones, %esp
+
+        # Copio Cadena estatica
+        movl    8(%ebp), %ecx
+        movl    %ecx, -8(%ebp)
+
 %bloque
         leave
         # addl    $%offset_declaraciones, %esp

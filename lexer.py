@@ -68,7 +68,7 @@ class Val(object):
     E_FIN_LINEA = "2"
 
     """ Cotas """
-    MAX_CTE_STRING = 40
+    MAX_CTE_STRING = 120
     MIN_CTE_ENT = -32768
     MAX_CTE_ENT = 32767
 
