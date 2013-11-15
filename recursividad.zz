@@ -1,0 +1,34 @@
+## UNLAM 2013 - LyC
+## Bravo, Giorgi, Francischini
+## test recursividad
+
+dec:
+    int: n1, enter, letra
+endec
+
+def imprime_letra: int
+    dec:
+        int: aux
+    endec
+    aux = letra
+    print aux
+    aux = aux + 1
+    letra = aux
+    if aux <= 89:
+        aux = imprime_letra()
+return aux
+
+print "Impresion abcedario recursivamente\n"
+print "==================================\n"
+print "* Acceso variables globales por cadena estatica\n"
+print "* Recursividad de funcion\n"
+
+enter = 10
+
+letra = 65
+
+n1 = imprime_letra()
+
+print letra
+
+print "\n----Fin----"
