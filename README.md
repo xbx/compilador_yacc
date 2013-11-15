@@ -16,15 +16,28 @@ Basado en PLY (Python Lex-Yacc)
 
 Introducción
 ============
-Compilador de lenguaje experimental "ZZ". Inspirado por python y C. Ejemplos en \*.zz
+Compilador de lenguaje experimental "ZZ". Inspirado en python y C. Ejemplos en \*.zz
 
 Caracteristicas
 ---------------
-* Lenguaje de proposito general, muy limitado por su caracter experimental, de alto nivel.Diseñado con la filosofía de emfatizar la legibilidad del código.
-* ZZ usa indentacion por espacios en vez de llaves ({}) para delimitar los bloques de código. 
+* Lenguaje de proposito general, orientado a Stack, de tipo Algol, muy limitado por su caracter experimental, de alto nivel. Diseñado con la filosofía de emfatizar la legibilidad del código.
 * Codigo assembler generado en GNU GAS Assembler
 * Compilación mediante `gcc` genera ejecutable tipo ELF (para x86_64 o i386 segun arquitectura OS)
+* Tipado estatico
 
+* ZZ usa indentacion por espacios en vez de llaves ({}) para delimitar los bloques de código. 
+* Implementacion de funciones (sin parametros)
+* Funciones pueden acceder a variables de ambito Main (por CADENA ESTATICA)
+* Retorno de valores de funciones
+* Funcion percent
+* Sentencia between
+* Loop: while, condicional: if
+* Sentencia break para while
+* Tipos de datos: string, int, float
+* Funcion print para enteros y strings. 
+* Funcion printc para imprimir caracteres ASCII a partir un entero
+* Recursividad de funciones
+* Operaciones matematicas utilizando Floating-point Co-Processor
 
 
 Requisitos de sistema
