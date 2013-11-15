@@ -1,0 +1,24 @@
+## UNLAM 2013 - LyC
+## Bravo, Giorgi, Francischini
+## test percent
+
+dec:
+    float: i
+    int: c
+endec
+
+i = 59.0 
+i = percent i, 10
+
+while i > 0:
+    print "loop!\n"
+    i = i - 1
+
+
+c = 130
+c = percent c, 20
+
+print "20% de 130 es: "
+print c
+
+print "\n----Fin----"
