@@ -1,0 +1,39 @@
+## UNLAM 2013 - LyC
+## Bravo, Giorgi, Francischini
+## test recursividad
+
+dec:
+    int: n1, i, es_primo
+endec
+
+def calcular_primo: int
+    dec:
+        int: numero, retorno, cont, aux, aux2
+    endec
+    numero = i
+    cont = 2
+    retorno = 1
+    while cont < numero:
+        aux = numero / cont
+        aux2 = aux*cont
+        if aux2 == numero:
+            retorno = 0
+            break
+        cont = cont + 1
+    retorno = retorno
+return retorno
+
+print "Primeros 1000 NUMEROS PRIMOS\n"
+print "============================\n"
+
+n1 = tecla()
+
+i = 0
+while i < 1000:
+    i = i + 1
+    es_primo = calcular_primo()
+    if es_primo == 1:
+        print i
+        print ": Es primo!\n"
+
+print "\n----Fin----"

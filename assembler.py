@@ -103,31 +103,30 @@ class TraductorAsm:
             elif terceto.tipo == "expresion":
                 asm = "\n# aritmetica\n"
 
+                def get_tipo_fld(tipo_operando):
+                    if tipo_operando == 'int':
+                        return 'fild'
+                    elif tipo_operando == 'float':
+                        return 'fld'
+                    elif tipo_operando == 'cte_int':
+                        return 'fild'
+                    else:
+                        raise("Error. Tipo no soportado")
+
                 operando1 = self.representar_operando(terceto.items[1])
                 if isinstance(terceto.items[1], terceto.__class__):
                     asm += self.asm_terceto[terceto.items[1].id]
                     print terceto
                     fld1 = terceto.items[1].tipo_fld
                 elif isinstance(terceto.items[1], Simbolo):
-                    if terceto.items[1].tipo == 'int':
-                        fld1 = 'filds'
-                    elif terceto.items[1].tipo == 'float':
-                        fld1 = 'flds'
-                    else:
-                        fld1 = 'flds'
-
+                    fld1 = get_tipo_fld(terceto.items[1].tipo)
 
                 operando2 = self.representar_operando(terceto.items[2])
                 if isinstance(terceto.items[2], terceto.__class__):
                     asm += self.asm_terceto[terceto.items[2].id]
                     fld2 = terceto.items[2].tipo_fld
-                elif isinstance(terceto.items[1], Simbolo):
-                    if terceto.items[1].tipo == 'int':
-                        fld2 = 'filds'
-                    elif terceto.items[1].tipo == 'float':
-                        fld2 = 'flds'
-                    else:
-                        fld2 = 'flds'
+                elif isinstance(terceto.items[2], Simbolo):
+                    fld2 = get_tipo_fld(terceto.items[2].tipo)
 
                 # Operando 2 a copro
                 if operando2 == '%eax':
@@ -142,7 +141,7 @@ class TraductorAsm:
                 asm = asm + "        %s   %s\n" % (fld1, operando1)
 
 
-                if (fld1, fld2) == ('filds', 'filds'):
+                if fld1 == 'fild' and fld2 == 'fild':
                     terceto.tipo_fld = 'fild'
                 else:
                     terceto.tipo_fld = 'fld'
@@ -238,7 +237,6 @@ class TraductorAsm:
                     asm = asm.replace('%num', self.representar_operando(simbolo))
                     asm = asm.replace('%etiqueta_loop', self.inventar_etiqueta('LOOP'))
                     asm = asm.replace('%etiqueta_sig', self.inventar_etiqueta('SIG'))
-                    asm = asm.replace('%etiqueta_fin', self.inventar_etiqueta('FIN'))
                 else:
                     asm = Asm.print_
                     asm = asm.replace('%tipo_mov', 'movl')
