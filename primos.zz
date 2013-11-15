@@ -3,7 +3,7 @@
 ## test recursividad
 
 dec:
-    int: n1, i, es_primo
+    int: n1, i, es_primo, restan_encontrar
 endec
 
 def calcular_primo: int
@@ -23,17 +23,17 @@ def calcular_primo: int
     retorno = retorno
 return retorno
 
-print "Primeros 1000 NUMEROS PRIMOS\n"
+print "Primeros 500 NUMEROS PRIMOS\n"
 print "============================\n"
 
-n1 = tecla()
-
-i = 0
-while i < 1000:
+i = 1
+restan_encontrar = 500
+while restan_encontrar > 0:
     i = i + 1
     es_primo = calcular_primo()
     if es_primo == 1:
         print i
         print ": Es primo!\n"
+        restan_encontrar = restan_encontrar - 1
 
 print "\n----Fin----"

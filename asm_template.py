@@ -131,10 +131,10 @@ _ascii_enter:
 # tecla
         call    getchar
         movl    %eax, -4(%ebp)
-tecla:
-        call    getchar
+%etiqueta_tecla:
+        call    getchar   # Flush stdin
         cmpl    %eax, _ascii_enter
-        jne     tecla
+        jne     %etiqueta_tecla
 """
 )
     funcion = (
@@ -148,13 +148,13 @@ tecla:
         subl    $%offset_declaraciones, %esp
 
         # Copio Cadena estatica
-        movl    8(%ebp), %ecx
-        movl    %ecx, -8(%ebp)
+        movl    %eax, -8(%ebp)
 
 %bloque
         leave
         # addl    $%offset_declaraciones, %esp
         ret
+# ----------------------------------------------
 %funciones
 """
 )
