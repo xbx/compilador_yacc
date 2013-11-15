@@ -73,6 +73,7 @@ class Val(object):
     MAX_CTE_STRING = 120
     MIN_CTE_ENT = -32768
     MAX_CTE_ENT = 32767
+    MAX_TAM_ID = 25
 
 class Lexer(object):
     """
@@ -176,6 +177,10 @@ class Lexer(object):
                 self.cadena = ""
                 continue
             elif isinstance(token, Token) and token.type == 'ID':
+                ### Cotas de ID ####
+                if len(token.value) > Val.MAX_TAM_ID:
+                    raise TypeError("ID supera cota maxima (%s): %s"
+                                    % (Val.MAX_TAM_ID, token.value))
                 """
                     #######################
                     Palabras reservadas PR_
