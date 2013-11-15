@@ -60,6 +60,7 @@ class TraductorAsm:
                 asm = asm.replace('%etiqueta_condicion', self.inventar_etiqueta(prefijo='CONDICION'))
                 asm = asm.replace('%etiqueta_salto', etiqueta_do)
                 asm = asm.replace('%bloque', bloque)
+                asm = asm.replace('%break', '    jmp    %s' % etiqueta_do)
                 self.asm_terceto[terceto.id] = asm
 
             elif terceto.tipo == "if" or terceto.tipo == "ifelse":
@@ -266,6 +267,8 @@ class TraductorAsm:
 
                 self.asm_terceto[terceto.id] = asm
                 self.asm = self.asm.replace('%funciones', asm)
+            elif terceto.tipo == 'break':
+                self.asm_terceto[terceto.id] = '%break'
             elif terceto.tipo == 'call':
                 # Llamada a una funcion, ej: mi_suma()
                 terceto.variable_aux = '%eax'

@@ -181,6 +181,7 @@ def p_sentencia(p):
     sentencia : sentencia_condicional
     sentencia : sentencia_while
     sentencia : sentencia_print
+    sentencia : sentencia_break
     """
     p[0] = p[1]
 
@@ -196,6 +197,12 @@ def p_sentencia_print(p):
     """
     simbolo = tabla_sim.obtener_variable(p[2])
     p[0] = Terceto(simbolo, tipo="print")
+
+def p_sentencia_break(p):
+    """
+    sentencia_break : PR_BREAK
+    """
+    p[0] = Terceto(p[1], tipo="break")
 
 def p_sentencia_print_cte_string(p):
     """

@@ -42,6 +42,7 @@ tokens = [
    'PR_RETURN',
    'PR_STRING',
    'PR_TECLA',
+   'PR_BREAK',
    'PAREN_ABRE',
    'PAREN_CIERRA',
    'COMA',
@@ -207,6 +208,8 @@ class Lexer(object):
                     token = Token(type="PR_ELSE", value="else")
                 elif token.value == 'tecla':
                     token = Token(type="PR_TECLA", value="tecla")
+                elif token.value == 'break':
+                    token = Token(type="PR_BREAK", value="break")
 
             self.cadena = ""
             # retorno del/de los token/s

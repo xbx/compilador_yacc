@@ -41,6 +41,10 @@ main:
 LC0:
     .long   .LC0
 
+_ascii_enter:
+    .int 10
+    .align 4
+
 %cte_numericas
 %cte_string
 """
@@ -101,7 +105,7 @@ LC0:
         movl    %eax, -4(%ebp)
 tecla:
         call    getchar
-        cmpl    %eax, _10
+        cmpl    %eax, _ascii_enter
         jne     tecla
         # fildl    -4(%ebp)
         # fstps    -4(%ebp)
