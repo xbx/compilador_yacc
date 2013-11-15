@@ -11,7 +11,7 @@ def imprime_letra: int
         int: aux
     endec
     aux = letra
-    print aux
+    printc aux
     aux = aux + 1
     letra = aux
     if aux <= 89:
@@ -28,7 +28,5 @@ enter = 10
 letra = 65
 
 n1 = imprime_letra()
-
-print letra
 
 print "\n----Fin----"

@@ -15,16 +15,16 @@ def alfabeto: int
     ## Lectura de la variable del main, se pasa a una local para poder usarla
     ## Se usa la cadena estatica
     enterlocal = enter
-    print enterlocal
+    printc enterlocal
 
     letra_local = letra_main
-    print enterlocal
+    printc enterlocal
     i = 0
     while i < 26:
         letra = letra_local + i
-        print letra
+        printc letra
         i = i + 1
-    print enterlocal
+    printc enterlocal
 return i
 
 ## Este valor global sera leido por la funcion 
@@ -33,19 +33,19 @@ saludo = "Hasta luego"
 bye = saludo
 
 print "Letras minusculas:"
-print enter
+printc enter
 print "=================="
 letra_main = 97
 ultimo = alfabeto()
-print enter
+printc enter
 
 print "Letras mayusculas:"
-print enter
+printc enter
 print "=================="
 letra_main = 65
 ultimo = alfabeto()
 
-print enter
+printc enter
 print bye
-print enter
+printc enter
 

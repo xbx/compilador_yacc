@@ -11,26 +11,27 @@ enter = 10
 
 print "Letras minusculas:"
 letra_a = 97
-print enter
+
+printc enter
+
 i = 0
 while i < 26:
     letra = letra_a + i
-    print letra
+    printc letra
     i = i + 1
 
-print enter
+printc enter
 
 print "Letras mayusculas:"
 letra_a = 65
-print enter
+printc enter
 i = 0
 while i < 26:
     letra = letra_a + i
-    print letra
+    printc letra
     i = i + 1
 
-print enter
 
-
-print "fin"
-print enter
+printc enter
+print "--*fin*--"
+printc enter

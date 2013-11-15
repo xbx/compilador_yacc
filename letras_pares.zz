@@ -17,13 +17,12 @@ return aux
 
 enter = 10
 
-print "Inicio letras pares:  "
-print enter
+print "Inicio letras pares: \n"
 
 n1 = 65
 while n1 < 90:
-    print n1
-    print enter
+    printc n1
+    printc enter
     dos = funcion1()
     n1 = n1 + 2
 

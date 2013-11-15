@@ -227,13 +227,20 @@ class TraductorAsm:
                     asm = asm + "        movl    %%eax, -%s(%%ebp) # asig\n" % terceto.items[0].offset
 
                 self.asm_terceto[terceto.id] = asm
-            elif terceto.tipo == "print":
-                asm = Asm.print_
+            elif terceto.tipo == "print" or terceto.tipo == 'printc':
                 simbolo = terceto.items[0]
-                if simbolo.tipo == 'int':
+                if terceto.tipo == 'printc':
+                    asm = Asm.print_
                     asm = asm.replace('%tipo_mov', 'leal')
                     asm = asm.replace('%len', '1')  # TODO: hardcode len
+                elif simbolo.tipo == 'int':
+                    asm = Asm.iprint
+                    asm = asm.replace('%num', self.representar_operando(simbolo))
+                    asm = asm.replace('%etiqueta_loop', self.inventar_etiqueta('LOOP'))
+                    asm = asm.replace('%etiqueta_sig', self.inventar_etiqueta('SIG'))
+                    asm = asm.replace('%etiqueta_fin', self.inventar_etiqueta('FIN'))
                 else:
+                    asm = Asm.print_
                     asm = asm.replace('%tipo_mov', 'movl')
                     try:
                         asm = asm.replace('%len', '%s_tam' % simbolo.etiqueta_cte)

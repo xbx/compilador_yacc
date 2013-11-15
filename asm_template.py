@@ -98,6 +98,34 @@ _ascii_enter:
 """
 )
 
+    iprint = (
+"""
+# print int
+        movl    %esp, -4(%ebp)
+        movl    %num, %eax
+        movl    $10,  %ebx
+        movl    $0,   %edi              #Lo uso para el loop de numeros a imprimir
+        %etiqueta_loop:
+        movl    $0,  %edx
+        divl    %ebx               #resultado en eax, resto en edx
+        addb    $48, %dl
+        pushl   %edx
+        incl    %edi               #Incremento di
+        cmpb    $0, %al            #Si la division dio 0 es el ultimo digito a imprimir
+        jz %etiqueta_sig
+        jmp %etiqueta_loop
+        %etiqueta_sig:
+        movl    $4, %eax           # Multiplico largo por 4 bytes
+        mull    %edi
+        leal    (%esp), %ecx
+        movl    %eax, %edx           # Tamanio
+        movl    $1, %ebx           # sys write
+        movl    $4, %eax           # stdout
+        int     $0x80              # syscall
+        movl    -4(%ebp), %esp
+"""
+)
+
     tecla = (
 """
 # tecla
@@ -107,8 +135,6 @@ tecla:
         call    getchar
         cmpl    %eax, _ascii_enter
         jne     tecla
-        # fildl    -4(%ebp)
-        # fstps    -4(%ebp)
 """
 )
     funcion = (

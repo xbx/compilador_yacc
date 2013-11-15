@@ -194,9 +194,10 @@ def p_sentencia_sentencia(p):
 def p_sentencia_print(p):
     """
     sentencia_print : PR_PRINT ID
+    sentencia_print : PR_PRINTC ID
     """
     simbolo = tabla_sim.obtener_variable(p[2])
-    p[0] = Terceto(simbolo, tipo="print")
+    p[0] = Terceto(simbolo, tipo=p[1])
 
 def p_sentencia_break(p):
     """
