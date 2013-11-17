@@ -21,4 +21,4 @@ c = percent c, 20
 print "20% de 130 es: "
 print c
 
-print "\n----Fin----"
+print "\n----Fin----\n"

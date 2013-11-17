@@ -36,4 +36,4 @@ while restan_encontrar > 0:
         print ": Es primo!\n"
         restan_encontrar = restan_encontrar - 1
 
-print "\n----Fin----"
+print "\n----Fin----\n"
