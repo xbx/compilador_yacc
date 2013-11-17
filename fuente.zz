@@ -4,7 +4,7 @@ dec:
     string: nino, adol, adul, bebe, muy
 endec
 
-def funcion2: int
+def funcion2: string
     dec:
         string: s
     endec

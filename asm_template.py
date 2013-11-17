@@ -151,6 +151,7 @@ _ascii_enter:
         movl    %eax, -8(%ebp)
 
 %bloque
+        %return
         leave
         # addl    $%offset_declaraciones, %esp
         ret

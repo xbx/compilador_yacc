@@ -349,12 +349,19 @@ def p_factor_id(p):
 
 def p_factor_cte(p):
     """
+    factor : factor_negativo
     factor : CTE_ENT
     factor : CTE_REAL
     """
     simbolo = tabla_sim.declarar_cte_numerica(valor=p[1])
     p[0] = simbolo
 
+def p_factor_negativo(p):
+    """
+    factor_negativo : OP_RESTA CTE_ENT
+    factor_negativo : OP_RESTA CTE_REAL
+    """
+    p[0] = "-" + p[2]
 
 # Error rule for syntax errors
 def p_error(p):

@@ -268,7 +268,7 @@ class TraductorAsm:
 
                 a_retornar = self.representar_operando(terceto.items[3])
                 terceto.variable_aux = '%eax'
-                asm_return = "    movl    %s, %s" % (a_retornar, terceto.variable_aux)
+                asm_return = "movl    %s, %s" % (a_retornar, terceto.variable_aux)
                 asm = asm.replace('%return', asm_return)
 
                 self.asm_terceto[terceto.id] = asm
