@@ -1,0 +1,17 @@
+## UNLAM 2013 - LyC
+## Bravo, Giorgi, Francischini
+## test factorial recursivo
+
+dec:
+    int: numero, resultado
+endec
+
+numero = -3
+
+while numero < 5:
+    print "menor\n"
+    numero = numero + 1
+
+print numero
+
+print "\n----Fin----\n"
