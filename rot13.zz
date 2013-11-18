@@ -5,10 +5,7 @@
 
 dec:
     int: caracter
-    float: b
 endec
-
-caracter = b
 
 while 1 == 1:
     caracter = stdin()
@@ -31,5 +28,7 @@ while 1 == 1:
         caracter = caracter - 13
         printc caracter
         continue
+
+    ## Cualquier otro caracter no alfa
     printc caracter
 
