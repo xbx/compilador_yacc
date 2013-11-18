@@ -99,6 +99,29 @@ _ascii_enter:
         int     $0x80              # syscall
 """
 )
+    print_str = (
+"""
+# print
+        movl     $0, %edx
+        %tipo_mov_1     %string, %ebx
+        addl     $%avance, %ebx # sig. posicion string
+%tamanio_print:
+        addl     $1, %edx # contador tam
+        movl     $0, %eax
+        movb     (%ebx), %al
+        addl     $1, %ebx # sig. posicion string
+        cmpl     _ascii_enter, %eax
+        jne      %tamanio_print
+
+        subl     $1, %ebx # sig. posicion string
+
+        # movl    $%len, %edx        # tamanio
+        %tipo_mov_2    %string, %ecx # string
+        movl    $1, %ebx           # sys write
+        movl    $4, %eax           # stdout
+        int     $0x80              # syscall
+"""
+)
 
     iprint = (
 """

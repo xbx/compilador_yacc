@@ -1,15 +1,13 @@
 ## UNLAM 2013 - LyC
 ## Bravo, Giorgi, Francischini
-## test Codificacion ROT13
+## test To UPPER
 ## Uso: echo "hola" | ./programa
 
 dec:
     int: caracter
-    float: b
+    string: ok
 endec
 
-printnl
-printnl
-printnl
+ok = "holaabcdefghijklmnopq"
 
-print "ok"
+print ok

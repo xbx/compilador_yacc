@@ -261,21 +261,32 @@ class TraductorAsm:
             elif terceto.tipo == "print" or terceto.tipo == 'printc':
                 simbolo = terceto.items[0]
                 if terceto.tipo == 'printc':
+                    # Ej "printc 65" // imprime "A"
                     asm = Asm.print_
                     asm = asm.replace('%tipo_mov', 'leal')
                     asm = asm.replace('%len', '1')  # TODO: hardcode len
                 elif simbolo.tipo == 'int':
+                    # Ej "print 65" // imprime "65"
                     asm = Asm.iprint
                     asm = asm.replace('%num', self.representar_operando(simbolo))
                     asm = asm.replace('%etiqueta_loop', self.inventar_etiqueta('LOOP'))
                     asm = asm.replace('%etiqueta_sig', self.inventar_etiqueta('SIG'))
                 else:
-                    asm = Asm.print_
-                    asm = asm.replace('%tipo_mov', 'movl')
-                    try:
-                        asm = asm.replace('%len', '%s_tam' % simbolo.etiqueta_cte)
-                    except:
-                        asm = asm.replace('%len', '%s_tam' % simbolo.nombre)
+                    # Print de strings
+                    asm = Asm.print_str
+                    asm = asm.replace('%tamanio_print', self.inventar_etiqueta('TAMANIO_PRINT'))
+                    if isinstance(simbolo, Simbolo) and simbolo.tipo == 'cte_string':
+                        # print "hola"
+                        asm = asm.replace('%tipo_mov_1', 'leal')
+                        asm = asm.replace('%tipo_mov_2', 'movl')
+                        asm = asm.replace('%avance', '4')
+                    else:
+                        # print variable
+                        asm = asm.replace('%tipo_mov_1', 'movl')
+                        asm = asm.replace('%tipo_mov_2', 'movl')
+                        asm = asm.replace('%avance', '1')
+
+
                 asm = asm.replace('%string', self.representar_operando(simbolo))
                 self.asm_terceto[terceto.id] = asm
             elif terceto.tipo == 'printnl':

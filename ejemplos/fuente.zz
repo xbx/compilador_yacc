@@ -8,7 +8,7 @@ def funcion2: string
     dec:
         string: s
     endec
-    s = "hla!"
+    s = "hola!"
 return s
 
 def funcion1: int
@@ -45,3 +45,4 @@ if edad >= 20:
         print muy
     print adul
 
+print "\n"
