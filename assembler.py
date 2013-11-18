@@ -30,7 +30,7 @@ class TraductorAsm:
                     self.asm_terceto[terceto.id] += self.asm_terceto[item.id]
             elif terceto.tipo == "condicion":
                 asm = ""
-                if terceto.items[0] in ["<", "<=", ">", ">=", '==']:
+                if terceto.items[0] in ["<", "<=", ">", ">=", '==', '<>']:
                     izq = self.representar_operando(terceto.items[1])
                     der = self.representar_operando(terceto.items[2])
                     asm = "movl    %s, %%eax\n" % der
@@ -391,6 +391,9 @@ class TraductorAsm:
             asm_tipo = 'jle'
         elif tipo_condicion == '>=':
             asm_tipo = 'jl'
+        elif tipo_condicion == '<>':
+            asm_tipo = 'je'
+                
         return asm_tipo
     def obtener_jump_or(self, tipo_condicion):
         if tipo_condicion == '==':
@@ -403,6 +406,9 @@ class TraductorAsm:
             asm_tipo = 'jg'
         elif tipo_condicion == '>=':
             asm_tipo = 'jge'
+        elif tipo_condicion == '<>':
+            asm_tipo = 'je'
+            
         return asm_tipo
     def declaraciones_main(self):
         offset = {}

@@ -1,0 +1,30 @@
+## UNLAM 2013 - LyC
+## Bravo, Giorgi, Francischini
+## test distinto
+
+dec:
+    int: n, n1, n3
+endec
+
+n = 3
+n1 = 1
+n3 = 3
+
+if n <> n1:
+    print n
+    print " ES DISTINTO A: "
+    print n1
+
+printnl
+
+if n <> n3:
+    print n
+    print " ES DISTINTO A: "
+    print n3
+else
+    print n
+    print " ES IGUAL A: "
+    print n3
+    
+printnl
+print "FIN"
