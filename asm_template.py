@@ -128,7 +128,7 @@ _ascii_enter:
 """
 )
     printnl = (
-               
+
 """
         movl    $1, %edx               # tamanio
         leal    _ascii_enter, %ecx     # nueva linea

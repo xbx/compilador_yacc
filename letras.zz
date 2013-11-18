@@ -21,19 +21,18 @@ while i < 26:
     i = i + 1
 
 printnl
+printnl
 
 print "Letras mayusculas:"
 letra_a = 65
 printnl
 i = 0
+
 while i < 26:
     letra = letra_a + i
     printc letra
     i = i + 1
 
-
-println
-printnl
 printnl
 print "--*fin*--"
 printnl

@@ -183,6 +183,7 @@ def p_sentencia(p):
     sentencia : sentencia_print
     sentencia : sentencia_break
     sentencia : sentencia_printnl
+    sentencia : sentencia_continue
     """
     p[0] = p[1]
 
@@ -205,12 +206,19 @@ def p_sentencia_break(p):
     sentencia_break : PR_BREAK
     """
     p[0] = Terceto(p[1], tipo="break")
-    
+
 def p_sentencia_printnl(p):
     """
     sentencia_printnl : PR_PRINTNL
     """
     p[0] = Terceto(p[1], tipo="printnl")
+
+
+def p_sentencia_continue(p):
+    """
+    sentencia_continue : PR_CONTINUE
+    """
+    p[0] = Terceto(p[1], tipo="continue")
 
 def p_sentencia_print_cte_string(p):
     """

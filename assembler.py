@@ -46,6 +46,7 @@ class TraductorAsm:
                 asm = asm.replace('%etiqueta_entra', etiqueta_entra)
                 etiqueta_sale = self.inventar_etiqueta(prefijo='SALE')
                 asm = asm.replace('%etiqueta_sale', etiqueta_sale)
+                asm = asm.replace('%bloque', bloque)
 
                 if tipo_condicion == '&':
                     # condicion compleja: a > b & b < c
@@ -69,9 +70,10 @@ class TraductorAsm:
 
                 asm = asm.replace('%condicion', asm_condicion)
 
-                asm = asm.replace('%etiqueta_condicion', self.inventar_etiqueta(prefijo='CONDICION'))
+                etiqueta_condicion = self.inventar_etiqueta(prefijo='CONDICION')
+                asm = asm.replace('%continue', '    jmp    %s' % etiqueta_condicion)
+                asm = asm.replace('%etiqueta_condicion', etiqueta_condicion)
                 asm = asm.replace('%etiqueta_salto', etiqueta_salto)
-                asm = asm.replace('%bloque', bloque)
                 asm = asm.replace('%break', '    jmp    %s' % etiqueta_sale)
                 self.asm_terceto[terceto.id] = asm
 
@@ -306,6 +308,8 @@ class TraductorAsm:
                 self.asm = self.asm.replace('%funciones', asm)
             elif terceto.tipo == 'break':
                 self.asm_terceto[terceto.id] = '%break'
+            elif terceto.tipo == 'continue':
+                self.asm_terceto[terceto.id] = '%continue'
             elif terceto.tipo == 'call':
                 # Llamada a una funcion, ej: mi_suma()
                 terceto.variable_aux = '%eax'

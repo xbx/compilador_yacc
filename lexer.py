@@ -44,6 +44,7 @@ tokens = [
    'PR_TECLA',
    'PR_BREAK',
    'PR_STDIN',
+   'PR_CONTINUE',
    'PAREN_ABRE',
    'PAREN_CIERRA',
    'COMA',
@@ -224,6 +225,8 @@ class Lexer(object):
                     token = Token(type="PR_STDIN", value="stdin")
                 elif token.value == 'printnl':
                     token = Token(type="PR_PRINTNL", value="printnl")
+                elif token.value == 'continue':
+                    token = Token(type="PR_CONTINUE", value="continue")
 
             self.cadena = ""
             # retorno del/de los token/s

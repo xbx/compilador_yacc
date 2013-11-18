@@ -1,0 +1,24 @@
+## UNLAM 2013 - LyC
+## Bravo, Francischini, Giorgi
+## test continue
+dec:
+    int: i, aux1, aux2
+endec
+
+i = 0
+aux1 = 0
+aux2 = 0
+
+print "IMPRIMIR SOLO IMPARES\n"
+print "=====================\n"
+
+while i < 20:
+    i = i + 1
+    aux1 = i / 2
+    aux2 = aux1 * 2
+    if i == aux2:
+        continue
+    print i
+    printnl
+
+print "FIN\n"
