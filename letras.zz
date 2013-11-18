@@ -20,11 +20,11 @@ while i < 26:
     printc letra
     i = i + 1
 
-printc enter
+printnl
 
 print "Letras mayusculas:"
 letra_a = 65
-printc enter
+printnl
 i = 0
 while i < 26:
     letra = letra_a + i
@@ -32,6 +32,8 @@ while i < 26:
     i = i + 1
 
 
-printc enter
+println
+printnl
+printnl
 print "--*fin*--"
-printc enter
+printnl
