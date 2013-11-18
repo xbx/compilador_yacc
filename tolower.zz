@@ -1,0 +1,22 @@
+## UNLAM 2013 - LyC
+## Bravo, Giorgi, Francischini
+## test To UPPER
+## Uso: echo "hola" | ./programa
+
+dec:
+    int: caracter
+endec
+
+while 1 == 1:
+    caracter = stdin()
+    if caracter < 0:
+        ## Llega un < 0 si se termina la entrada
+        break
+    if caracter between 65 & 90:
+        caracter = caracter + 32
+        printc caracter
+        continue
+
+    ## Cualquier otro caracter no alfa
+    printc caracter
+
