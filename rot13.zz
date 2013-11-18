@@ -13,6 +13,7 @@ caracter = b
 while 1 == 1:
     caracter = stdin()
     if caracter < 0:
+        ## Llega un < 0 si se termina la entrada
         break
     if caracter between 97 & 109:
         caracter = caracter + 13
