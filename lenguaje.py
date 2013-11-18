@@ -297,6 +297,7 @@ def p_expression_term(p):
     expresion : termino
     expresion : expresion_percent
     expresion : expresion_tecla
+    expresion : expresion_stdin
     """
     p[0] = p[1]
 
@@ -316,6 +317,12 @@ def p_expresion_tecla(p):
     # Ingreso de una caracter por teclado: tecla()
     p[0] = Terceto(tipo="tecla")
 
+def p_expresion_stdin(p):
+    """
+    expresion_stdin : PR_STDIN PAREN_ABRE PAREN_CIERRA
+    """
+    # Ingreso de una caracter por entrada estandar: stdin()
+    p[0] = Terceto(tipo="stdin")
 
 def p_expression_funcion(p):
     'expresion : llamada_funcion'

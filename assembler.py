@@ -42,56 +42,85 @@ class TraductorAsm:
                 tipo_condicion = condicion.items[0]
                 bloque = self.asm_terceto[terceto.items[1].id]
                 asm = Asm.while_
+                etiqueta_entra = self.inventar_etiqueta(prefijo='ENTRA')
+                asm = asm.replace('%etiqueta_entra', etiqueta_entra)
+                etiqueta_sale = self.inventar_etiqueta(prefijo='SALE')
+                asm = asm.replace('%etiqueta_sale', etiqueta_sale)
+
                 if tipo_condicion == '&':
                     # condicion compleja: a > b & b < c
                     izq = condicion.items[1]
                     der = condicion.items[2]
+                    asm_condicion = self.obtener_asm_condicion_and(condicion_izq=izq, condicion_der=der)
+                    etiqueta_salto = etiqueta_sale
+                elif tipo_condicion == '|':
+                    # condicion compleja: a > b | b < c
+                    izq = condicion.items[1]
+                    der = condicion.items[2]
                     asm_condicion = self.obtener_asm_condicion_and_or(condicion_izq=izq, condicion_der=der)
+                    etiqueta_salto = etiqueta_entra
                 else:
                     # condicion simple: a > b
                     asm_tipo = self.obtener_jump(tipo_condicion)
                     asm_condicion = Asm.condicion_simple
                     asm_condicion = asm_condicion.replace('%condicion', self.asm_terceto[terceto.items[0].id])
                     asm_condicion = asm_condicion.replace('%tipo_condicion', asm_tipo)
+                    etiqueta_salto = etiqueta_sale
 
                 asm = asm.replace('%condicion', asm_condicion)
-                etiqueta_do = self.inventar_etiqueta(prefijo='DO')
-                asm = asm.replace('%etiqueta_do', etiqueta_do)
+
                 asm = asm.replace('%etiqueta_condicion', self.inventar_etiqueta(prefijo='CONDICION'))
-                asm = asm.replace('%etiqueta_salto', etiqueta_do)
+                asm = asm.replace('%etiqueta_salto', etiqueta_salto)
                 asm = asm.replace('%bloque', bloque)
-                asm = asm.replace('%break', '    jmp    %s' % etiqueta_do)
+                asm = asm.replace('%break', '    jmp    %s' % etiqueta_sale)
                 self.asm_terceto[terceto.id] = asm
 
             elif terceto.tipo == "if" or terceto.tipo == "ifelse":
                 condicion = terceto.items[0]
                 tipo_condicion = condicion.items[0]
                 bloque = self.asm_terceto[terceto.items[1].id]
+                etiqueta_entra = self.inventar_etiqueta(prefijo='IFENTRA')
+                etiqueta_else = self.inventar_etiqueta(prefijo='ELSE')
                 if tipo_condicion == '&':
                     # condicion compleja: a > b & b < c
                     izq = condicion.items[1]
                     der = condicion.items[2]
 
-                    asm_condicion = self.obtener_asm_condicion_and_or(condicion_izq=izq, condicion_der=der)
+                    asm_condicion = self.obtener_asm_condicion_and(condicion_izq=izq, condicion_der=der)
 
                     asm = Asm.if_
                     asm = asm.replace("%condicion", asm_condicion)
+                    etiqueta_salto = etiqueta_else
+                elif tipo_condicion == '|':
+                    # condicion compleja: a > b | b < c
+                    izq = condicion.items[1]
+                    der = condicion.items[2]
+
+                    asm_condicion = self.obtener_asm_condicion_or(condicion_izq=izq, condicion_der=der)
+
+                    asm = Asm.if_
+                    asm = asm.replace("%condicion", asm_condicion)
+                    etiqueta_salto = etiqueta_entra
                 else:
-                    # condicion simple: a > b
+                    # condicion simple: ej: a > b
                     asm_tipo = self.obtener_jump(tipo_condicion)
                     asm_condicion = Asm.condicion_simple
                     asm_condicion = asm_condicion.replace('%condicion', self.asm_terceto[terceto.items[0].id])
                     asm_condicion = asm_condicion.replace('%tipo_condicion', asm_tipo)
                     asm = Asm.if_
                     asm = asm.replace('%condicion', asm_condicion)
+                    etiqueta_salto = etiqueta_else
 
-                asm = asm.replace('%etiqueta_salto', self.inventar_etiqueta(prefijo='IFSALTO'))
+                asm = asm.replace('%etiqueta_else', etiqueta_else)
+                asm = asm.replace('%etiqueta_entra', etiqueta_entra)
                 asm = asm.replace('%etiqueta_fin', self.inventar_etiqueta(prefijo='ENDIF'))
                 if terceto.tipo == 'ifelse':
                     bloque_else = self.asm_terceto[terceto.items[2].id]
                 else:
                     bloque_else = ""
                 asm = asm.replace('%bloque_else', bloque_else)
+
+                asm = asm.replace('%etiqueta_salto', etiqueta_salto)
 
                 asm = asm.replace('%bloque', bloque)
                 self.asm_terceto[terceto.id] = asm
@@ -297,6 +326,11 @@ class TraductorAsm:
                 terceto.variable_aux = '-4(%ebp)'
                 asm = Asm.tecla.replace('%etiqueta_tecla', self.inventar_etiqueta('tecla'))
                 self.asm_terceto[terceto.id] = asm
+            elif terceto.tipo == 'stdin':
+                # Funcion stdin() (ingreo de un char por entrada estandar)
+                terceto.variable_aux = '-4(%ebp)'
+                asm = Asm.stdin_
+                self.asm_terceto[terceto.id] = asm
 
 
         # Limpiamos las marcas sin usar que pudieron haber quedado
@@ -311,9 +345,18 @@ class TraductorAsm:
     def ejecutar(self, ejecutable):
         system("./%s" % ejecutable)
 
-    def obtener_asm_condicion_and_or(self, condicion_izq, condicion_der):
+    def obtener_asm_condicion_and(self, condicion_izq, condicion_der):
         asm_tipo_izq = self.obtener_jump(condicion_izq.items[0])
         asm_tipo_der = self.obtener_jump(condicion_der.items[0])
+        asm_condicion = Asm.condicion_and_or
+        asm_condicion = asm_condicion.replace('%condicion_izq', self.asm_terceto[condicion_izq.id])
+        asm_condicion = asm_condicion.replace('%tipo_condicion_izq', asm_tipo_izq)
+        asm_condicion = asm_condicion.replace('%condicion_der', self.asm_terceto[condicion_der.id])
+        asm_condicion = asm_condicion.replace('%tipo_condicion_der', asm_tipo_der)
+        return asm_condicion
+    def obtener_asm_condicion_or(self, condicion_izq, condicion_der):
+        asm_tipo_izq = self.obtener_jump_or(condicion_izq.items[0])
+        asm_tipo_der = self.obtener_jump_or(condicion_der.items[0])
         asm_condicion = Asm.condicion_and_or
         asm_condicion = asm_condicion.replace('%condicion_izq', self.asm_terceto[condicion_izq.id])
         asm_condicion = asm_condicion.replace('%tipo_condicion_izq', asm_tipo_izq)
@@ -332,7 +375,18 @@ class TraductorAsm:
         elif tipo_condicion == '>=':
             asm_tipo = 'jl'
         return asm_tipo
-
+    def obtener_jump_or(self, tipo_condicion):
+        if tipo_condicion == '==':
+            asm_tipo = 'je'
+        elif tipo_condicion == '<':
+            asm_tipo = 'jl'
+        elif tipo_condicion == '<=':
+            asm_tipo = 'jle'
+        elif tipo_condicion == '>':
+            asm_tipo = 'jg'
+        elif tipo_condicion == '>=':
+            asm_tipo = 'jge'
+        return asm_tipo
     def declaraciones_main(self):
         offset = {}
         asm_cte_numericas = ""

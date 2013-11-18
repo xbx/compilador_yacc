@@ -54,9 +54,10 @@ _ascii_enter:
 """
 # if
         %condicion
+%etiqueta_entra:
         %bloque
         jmp    %etiqueta_fin
-%etiqueta_salto:
+%etiqueta_else:
         %bloque_else
 %etiqueta_fin:
 """
@@ -81,9 +82,10 @@ _ascii_enter:
 # while
 %etiqueta_condicion:
         %condicion
+%etiqueta_entra:
         %bloque
         jmp %etiqueta_condicion
-%etiqueta_do:
+%etiqueta_sale:
 """
 )
 
@@ -137,6 +139,14 @@ _ascii_enter:
         jne     %etiqueta_tecla
 """
 )
+    stdin_ = (
+"""
+# stdin
+        call    getchar
+        movl    %eax, -4(%ebp)
+"""
+)
+
     funcion = (
 """
 # funcion %nombre ------------------------------

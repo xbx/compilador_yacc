@@ -68,7 +68,7 @@ class TablaSim():
         simbolo = Simbolo()
         simbolo.id = self.ultimo_id
         self.ultimo_id = self.ultimo_id + 1
-        if int(str(valor)) >= 0:
+        if float(str(valor)) >= 0:
             simbolo.nombre = '_' + str(valor)
         else:
             simbolo.nombre = '_neg' + str(valor)[1:]

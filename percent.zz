@@ -7,7 +7,7 @@ dec:
     int: c
 endec
 
-i = 59.0 
+i = 59.0
 i = percent i, 10
 
 while i > 0:
