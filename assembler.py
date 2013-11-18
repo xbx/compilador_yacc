@@ -393,8 +393,8 @@ class TraductorAsm:
             asm_tipo = 'jl'
         elif tipo_condicion == '<>':
             asm_tipo = 'je'
-                
         return asm_tipo
+
     def obtener_jump_or(self, tipo_condicion):
         if tipo_condicion == '==':
             asm_tipo = 'je'
@@ -407,9 +407,9 @@ class TraductorAsm:
         elif tipo_condicion == '>=':
             asm_tipo = 'jge'
         elif tipo_condicion == '<>':
-            asm_tipo = 'je'
-            
+            asm_tipo = 'jne'
         return asm_tipo
+
     def declaraciones_main(self):
         offset = {}
         asm_cte_numericas = ""
