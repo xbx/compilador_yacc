@@ -247,6 +247,8 @@ class TraductorAsm:
                         asm = asm.replace('%len', '%s_tam' % simbolo.nombre)
                 asm = asm.replace('%string', self.representar_operando(simbolo))
                 self.asm_terceto[terceto.id] = asm
+            elif terceto.tipo == 'printnl':
+                self.asm_terceto[terceto.id] = Asm.printnl
             elif terceto.tipo == 'funcion':
                 simbolo = terceto.items[0]
 
@@ -306,7 +308,7 @@ class TraductorAsm:
             out.write(self.asm)
 
     def compilar(self, asm, ejecutable):
-        system("/bin/gcc -lm -m32 -o %s %s" % (ejecutable, asm))
+        system("/usr/bin/gcc -lm -m32 -o %s %s" % (ejecutable, asm))
 
     def ejecutar(self, ejecutable):
         system("./%s" % ejecutable)

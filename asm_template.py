@@ -125,6 +125,16 @@ _ascii_enter:
         movl    -4(%ebp), %esp
 """
 )
+    printnl = (
+               
+"""
+        movl    $1, %edx               # tamanio
+        leal    _ascii_enter, %ecx     # nueva linea
+        movl    $1, %ebx               # sys write
+        movl    $4, %eax               # stdout
+        int     $0x80                  # syscall
+"""
+)
 
     tecla = (
 """
