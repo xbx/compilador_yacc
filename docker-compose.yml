@@ -1,0 +1,7 @@
+version: "3"
+
+services:
+  compile-example:
+    command: python lenguaje.py ejemplos/primos.zz
+    build: .
+    
